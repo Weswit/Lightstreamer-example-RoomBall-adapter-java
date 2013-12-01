@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<adapters_conf id="ROOMBALL">
+    <metadata_provider>
+        <adapter_class>com.lightstreamer.adapters.RoomBall.RoomBallMetaAdapter</adapter_class>
+
+        <!--
+          TCP port on which Sun/Oracle's JMXMP connector will be
+          listening.
+        -->
+        <param name="jmxPort">9999</param>
+        
+        <messages_pool>
+            <max_size>10</max_size>
+            <max_free>10</max_free>
+        </messages_pool>
+        
+    </metadata_provider>
+    
+    <data_provider>
+        <adapter_class>com.lightstreamer.adapters.RoomBall.RoomBallAdapter</adapter_class>
+        
+        <!--
+          Frame rate for physics calculations. In milliseconds.
+        -->
+        <param name="frameRate">10</param>
+
+        <!--
+          Number of steps for a single frame
+        -->
+        <param name="stepsPerFrame">4</param>
+        
+          
+    </data_provider>
+</adapters_conf>
