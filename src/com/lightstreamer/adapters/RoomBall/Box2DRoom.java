@@ -20,6 +20,8 @@ package com.lightstreamer.adapters.RoomBall;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.dynamics.World;
@@ -42,12 +44,14 @@ public class Box2DRoom implements Room {
 
     private final Ball ball;
 
-    private volatile Publisher listener;
+    private volatile Publisher publisher;
 
     // Setup world
     private final World m_world;
 
     private final RoomEngine engine = new RoomEngine();
+
+    private final Executor executor;
 
     private final Logger logger;
 
@@ -58,7 +62,7 @@ public class Box2DRoom implements Room {
 
     private int frameRate;
 
-    private float timeStep; // 1.0f/25.0f;
+    private float timeStep;
 
     private static final int DEFAULT_STEPS_PER_FRAME = 1;
     private static final int DEFAULT_FRAME_RATE = 10;
@@ -76,26 +80,26 @@ public class Box2DRoom implements Room {
 
     // Constructor -------------------------------------------------------------
 
-    private static Box2DRoom instance = null;
+    static private Box2DRoom instance = null;
 
-    synchronized static public Box2DRoom getInstance() {
+    static public Box2DRoom getInstance() {
         if (instance == null) {
-
             instance = new Box2DRoom(new NullPublisher(), new WorldFactory().createWorld());
         }
         return instance;
     }
 
-    private Box2DRoom(Publisher listener, World world) {
+    private Box2DRoom(Publisher publisher, World world) {
         super();
         logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
 
-        this.listener = listener;
+        this.publisher = publisher;
         this.m_world = world;
         this.ball = new BallFactory().createElement(m_world);
 
         setFrameRate(DEFAULT_FRAME_RATE);
 
+        executor = Executors.newSingleThreadExecutor();
     }
 
     // Nested Class ------------------------------------------------------------
@@ -130,13 +134,33 @@ public class Box2DRoom implements Room {
                 }
             }
         }
+    }
 
+    class PublishEventTask implements Runnable {
+
+        private final Event event;
+
+        public PublishEventTask(Event event) {
+            this.event = event;
+        }
+
+        @Override
+        public void run() {
+            publisher.publish(event);
+        }
+    }
+
+    class PublishEOSTask implements Runnable {
+        @Override
+        public void run() {
+            publisher.publishEOS();
+        }
     }
 
     // Public Methods ----------------------------------------------------------
 
     public void setPublisher(Publisher publisher) {
-        this.listener = publisher;
+        this.publisher = publisher;
     }
 
     public void setFrameRate(int frameRate) {
@@ -148,7 +172,6 @@ public class Box2DRoom implements Room {
     public void setStepsPerFrame(int stepsPerFrame) {
         this.stepsPerFrame = stepsPerFrame;
     }
-
 
     @Override
     public void start() {
@@ -202,8 +225,8 @@ public class Box2DRoom implements Room {
         String actualName = computeName(proposedName, players.keySet());
         Player player = new PlayerFactory().createElement(m_world, actualName, usrAgent);
         players.putIfAbsent(player.getName(), player);
-        listener.publishAdd(player);
 
+        publishAdd(player);
         logger.info("Added player '" + actualName + "'");
         return actualName;
     }
@@ -218,7 +241,8 @@ public class Box2DRoom implements Room {
         }
 
         player.close(m_world);
-        listener.publishDelete(player);
+
+        publishDelete(player);
         logger.info("Removed player '"+ name +"'");
     }
 
@@ -227,13 +251,13 @@ public class Box2DRoom implements Room {
 
         for (Player player  : players.values()) {
             player.setAsChanged();
-            listener.publishTouch(player);
+            publishTouch(player);
         }
 
         ball.setAsChanged();
-        listener.publishTouch(ball);
 
-        listener.publishEOS();
+        publishTouch(ball);
+        publishEOS();
     }
 
     @Override
@@ -252,7 +276,7 @@ public class Box2DRoom implements Room {
         logger.debug("New message for " + name + " :" + newMsg);
         player.setLastMsg(newMsg);
 
-        listener.publishUpdate(player);
+        publishUpdate(player);
     }
 
     // Private Methods ---------------------------------------------------------
@@ -266,7 +290,7 @@ public class Box2DRoom implements Room {
         }
     }
 
-    private void step() {
+    synchronized private void step() {
 
         for (Player player : players.values()) {
             player.applyImpulse();
@@ -281,23 +305,51 @@ public class Box2DRoom implements Room {
         ball.synchWithWorld();
     }
 
+
+    private void publishAdd(Element element) {
+        publish(element, new AddEventCreator());
+    }
+
+    private void publishDelete(Element element) {
+        publish(element, new DeleteEventCreator());
+    }
+
+    private void publishUpdate(Element element) {
+        publish(element, new UpdateEventCreator());
+    }
+
+    private void publishTouch(Element element) {
+        publish(element, new TouchEventCreator());
+    }
+
+    private void publish(Element element, EventCreator eventCreator) {
+        element.accept(eventCreator);
+        final Event event = eventCreator.getEvent();
+
+        executor.execute(new PublishEventTask(event));
+    }
+
+    private void publishEOS() {
+        executor.execute(new PublishEOSTask());
+    }
+
     synchronized private void sendUpdates() {
 
         for (Player player : players.values()) {
-            listener.publishUpdate(player);
+            publishUpdate(player);
         }
 
-        listener.publishUpdate(ball);
+        publishUpdate(ball);
     }
 
     private void tickStatistics() {
         try {
             // Post overall bandwidth utilization.
             if ( ticksCount++ > ((2000/frameRate)* factorWorld) ) {
-                listener.postOverallBandwidth();
+                publisher.postOverallBandwidth();
                 ticksCount = 0;
                 if ( nowStats++ > MAX_NOW_STATS ) {
-                    listener.flushStatistics();
+                    publisher.flushStatistics();
                     nowStats = 0;
                 }
             }
@@ -305,8 +357,6 @@ public class Box2DRoom implements Room {
             logger.warn("Unexpected error in send overall Bandwidth information.", e);
         }
     }
-
-
 
     /**
      * Compute a name that is not already present in the name list.

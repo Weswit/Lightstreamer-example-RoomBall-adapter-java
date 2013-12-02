@@ -18,16 +18,11 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-import java.util.Map;
-
 import org.jbox2d.dynamics.Body;
 
 public class Player extends AbstractElement {
 
     public static final String USERDATA_PLAYER = "PLAYER";
-
-    private static final String FIELD_USR_AGNT = "usrAgnt";
-    private static final String FIELD_MSG = "msg";
 
     // Member Variables --------------------------------------------------------
 
@@ -71,15 +66,8 @@ public class Player extends AbstractElement {
     }
 
     @Override
-    public void addFieldsTo(Map<String, String> update) {
-        super.addFieldsTo(update);
-        if (lastMsgIsChanged()) {
-            update.put(FIELD_MSG, getLastMsg());
-        }
-        if (usrAgentIsChanged()) {
-            update.put(FIELD_USR_AGNT, getUsrAgent());
-        }
-
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
     public String getUsrAgent() {

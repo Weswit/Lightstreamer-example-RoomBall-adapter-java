@@ -18,17 +18,12 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-import java.util.Map;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
 
 abstract public class AbstractElement implements Element {
-
-    private static final String FIELD_POS_Y = "posY";
-    private static final String FIELD_POS_X = "posX";
 
     // Nested Classes ----------------------------------------------------------
 
@@ -180,22 +175,6 @@ abstract public class AbstractElement implements Element {
         this.currPosX = (double) position.x;
         this.currPosY = (double) position.y;
     }
-
-    @Override
-    public void addFieldsTo(Map<String, String> update) {
-        if (posYIsChanged()) {
-            update.put(FIELD_POS_Y, ""+Math.round(getY()));
-        }
-        if (posXIsChanged()) {
-            update.put(FIELD_POS_X, ""+Math.round(getX()));
-        }
-
-    }
-
-//    @Override
-//    public String getUserData() {
-//        return (String) body.getUserData();
-//    }
 
     // Protected Methods -------------------------------------------------------
 

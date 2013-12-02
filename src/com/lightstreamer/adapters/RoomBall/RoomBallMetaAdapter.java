@@ -46,11 +46,9 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     private static final String FIELD_USER_AGENT = "USER_AGENT";
     private static final String FIELD_REMOTE_IP = "REMOTE_IP";
 
-//    private static final String CFG_PARAM_ADAPTER_SET_ID = "adapters_conf.id";
     private static final String CFG_PARAM_JMX_PORT = "jmxPort";
 
     private static final String ITEM_NAME_PREFIX_BAND = "My_Band_";
-//    private static final String ITEM_NAME_ROOM_ALARM = "Room_Alarm";
 
     private static final String ERROR = "Error";
 
@@ -87,27 +85,23 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             new ConcurrentHashMap<String, String>();
 
 
-    private final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final static ScheduledExecutorService executor =
+            Executors.newSingleThreadScheduledExecutor();
 
     private final static ConcurrentHashMap<String, PollsBandwidth> checkBandWidths =
             new ConcurrentHashMap<String, PollsBandwidth>();
 
     private int jmxPort = 9999;
 
-    /**
-     * Unique identification of the Adapter Set. It is used to uniquely
-     * identify the related Data Adapter instance;
-     * see feedMap on ChatDataAdapter.
-     */
-//    private String adapterSetId;
+    private final Room room;
 
-    private final Room receiver;
-
+    // Constructor -------------------------------------------------------------
 
     public RoomBallMetaAdapter() {
-        receiver = Box2DRoom.getInstance();
+        room = Box2DRoom.getInstance();
     }
 
+    // Public Methods ----------------------------------------------------------
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -120,10 +114,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         } catch (Exception e) {
             logger.warn("Error on tracer initialization.",  e);
         }
-
-        // Read the Adapter Set name, which is supplied by the Server as a parameter
-//        this.adapterSetId = (String) params.get(CFG_PARAM_ADAPTER_SET_ID);
-//        logger.info("Adapter Set: " + this.adapterSetId);
 
         if (params.containsKey(CFG_PARAM_JMX_PORT)) {
             this.jmxPort = new Integer((String)params.get(CFG_PARAM_JMX_PORT)).intValue();
@@ -168,7 +158,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         String deadmanwalking = nicksns.get(sessionID);
         if (deadmanwalking != null) {
             try {
-                receiver.removePlayer(deadmanwalking);
+                room.removePlayer(deadmanwalking);
             } catch (Exception e) {
                 logger.warn(e);
             }
@@ -287,7 +277,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             String userAgent = ( usrAgnts.get(sessionID) != null ? usrAgnts.get(sessionID) : "undetected");
 
 
-            String actualNickName = receiver.addPlayer(nickname, userAgent);
+            String actualNickName = room.addPlayer(nickname, userAgent);
 
             nicksns.put(sessionID, actualNickName);
 
@@ -298,9 +288,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         } catch (RoomException e) {
             logger.warn("Unable to add player: " + e.getMessage());
             return "overcrowed";
-//        } catch (CreditsException e) {
-//            logger.warn("Unable to forward the message to the Data Adapter.", e);
-//            return ERROR;
         } catch (Exception e) {
             logger.warn("Message not well formatted, skipped.", e);
             return ERROR;
@@ -308,21 +295,21 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     protected void notifyChatMessage(String sessionID, String message) throws Exception {
-        String player = getPlayer(sessionID);
+        String player = getPlayerName(sessionID);
         if (player == null) {
             return;
         }
 
-        receiver.updatePlayerMsg(player, message);
+        room.updatePlayerMsg(player, message);
     }
 
     protected void notifyCommand(String sessionID, String message) throws Exception {
-        String player = getPlayer(sessionID);
+        String player = getPlayerName(sessionID);
         if (player == null) {
             return;
         }
 
-        receiver.dispatchCommand(player, message);
+        room.dispatchCommand(player, message);
         logger.debug("Input command from user " + player + ": " + message);
     }
 
@@ -374,44 +361,16 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         return i != str.length();
     }
 
-//    /**
-//     * Retrieve the data adapter
-//     * @return
-//     * @throws CreditsException
-//     */
-//    private RoomBallAdapter getDataAdapter() throws Exception {
-//        RoomBallAdapter dataAdapter =  null;
-//         try {
-//             // Get the DataAdapter instance to bind it with this
-//             // Metadata Adapter and send messages through it
-//             dataAdapter = RoomBallAdapter.getDataAdapter(adapterSetId);
-//         } catch(Throwable t) {
-//             // It can happen if the Data Adapter jar was not even
-//             // included in the Adapter Set lib directory (the
-//             // Data Adapter could not be included in the Adapter Set as well)
-//             logger.error("DataAdapter class was not loaded: " + t);
-//             throw new Exception("No data adapter available");
-//         }
-//
-//         if (dataAdapter == null) {
-//             // The feed is not yet available on the static map, maybe the
-//             // Data Adapter was not included in the Adapter Set
-//             logger.error("DataAdapter not found");
-//             throw new Exception("No data adapter available");
-//         }
-//         return dataAdapter;
-//    }
-
-    private String getPlayer(String sessionID) {
-        String player = nicksns.get(sessionID);
-        if (player == null) {
+    private String getPlayerName(String sessionID) {
+        String playerName = nicksns.get(sessionID);
+        if (playerName == null) {
             // the message might have come too early; we cannot fulfill it
             tracer.warn("Received message from incomplete player (ip: " + getIp(sessionID) + ").");
             return null;
         }
 
-        tracer.debug("Received message from player '" + player + "' (ip: " + getIp(sessionID) + ").");
-        return player;
+        tracer.debug("Received message from player '" + playerName + "' (ip: " + getIp(sessionID) + ").");
+        return playerName;
     }
 
     private String getIp(String sessionID) {

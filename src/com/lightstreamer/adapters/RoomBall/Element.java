@@ -18,8 +18,6 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-import java.util.Map;
-
 import org.jbox2d.dynamics.World;
 
 public interface  Element {
@@ -40,6 +38,6 @@ public interface  Element {
 
     public void synchWithWorld();
 
-    public void addFieldsTo(Map<String, String> update);
+    public void accept(Visitor visitor);
 
 }

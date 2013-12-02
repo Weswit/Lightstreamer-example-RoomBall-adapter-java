@@ -34,18 +34,11 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
     private static final String CFG_PARAM_FRAME_RATE = "frameRate";
     private static final String CFG_PARAM_STEPS_PER_FRAME = "stepsPerFrame";
-//    private static final String CFG_PARAM_ADAPTER_SET_ID = "adapters_conf.id";
 
     private static final String ITEM_NAME_PLAYERS_LIST = "Players_list";
     private static final String ITEM_NAME_PREFIX_BAND = "My_Band_";
 
-    private static final String FIELD_KEY = "key";
-    private static final String FIELD_COMMAND = "command";
     private static final String FIELD_CURRENT_BANDWIDTH = "currentBandwidth";
-
-    private static final String CMD_ADD = "ADD";
-    private static final String CMD_UPDATE = "UPDATE";
-    private static final String CMD_DELETE = "DELETE";
 
     private Logger logger;
 
@@ -64,6 +57,8 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     private static WorldsStatistics stats = null;
 
     private Room room;
+
+    private Object playerListHandle = null;
 
     // Public Methods Implementing DataProvider Methods ------------------------
 
@@ -88,8 +83,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         logger.info("RoomAdapter start!");
     }
 
-
-
     @Override
     public void setListener(ItemEventListener lstnr) {
         if (listener == null) {
@@ -111,6 +104,7 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
          if (itemName.startsWith(ITEM_NAME_PLAYERS_LIST)) {
              logger.debug("Subscribe request for '" + ITEM_NAME_PLAYERS_LIST + "'.");
              setSubscribed();
+             this.playerListHandle = handle;
              room.start();
              room.touchAllElements();
 
@@ -160,32 +154,33 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         stats.reset();
     }
 
+    // synchronized playerListSubscribed
     @Override
-    public void publishAdd(Element box) {
-        boolean isSnapshot = false;
-        sendUpdate(CMD_ADD, box, isSnapshot);
-    }
+    synchronized public void publish(Event event) {
 
-    @Override
-    public void publishDelete(Element box) {
-        boolean isSnapshot = false;
-        sendUpdate(CMD_DELETE, box, isSnapshot);
-    }
+        try {
 
-    @Override
-    public void publishUpdate(Element element) {
-        if (!element.isChanged()) {
-            return;
+            if ( listener == null ) {
+                return ;
+            }
+            if (playerListHandle == null) {
+                return;
+            }
+
+            if (!playerListSubscribed) {
+                return;
+            }
+
+            if ( tracer != null && tracer.isTraceEnabled()) {
+                tracer.trace(event.getCommand() +" '" + event.getKey() + "'.");
+            }
+            logger.debug("Update list " + ITEM_NAME_PLAYERS_LIST + " " + event.getCommand() + " " + event.getKey());
+
+            listener.smartUpdate(playerListHandle, event.getItemEvent(), event.isSnapshot());
+
+        } catch (Exception e) {
+            logger.warn("Exception sending event.", e);
         }
-        boolean isSnapshot = false;
-        sendUpdate(CMD_UPDATE, element, isSnapshot);
-        element.setAsNotChanged();
-    }
-
-    @Override
-    public void publishTouch(Element body) {
-        boolean isSnapshot = true;
-        sendUpdate(CMD_ADD, body, isSnapshot);
     }
 
     @Override
@@ -196,11 +191,14 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         if (listener == null) {
             return;
         }
+        if (playerListHandle == null) {
+            return;
+        }
 
         // call the update on the listener;
         // in case the listener has just been detached,
         // the listener should detect the case
-        listener.endOfSnapshot(ITEM_NAME_PLAYERS_LIST);
+        listener.smartEndOfSnapshot(this.playerListHandle);
     }
 
     // TODO static?
@@ -216,7 +214,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         update.put(FIELD_CURRENT_BANDWIDTH, roundToSend(d, 2));
         listener.update(ITEM_NAME_PREFIX_BAND+ userName,update,false);
     }
-
 
     // Private Methods ---------------------------------------------------------
 
@@ -235,7 +232,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
             room.setStepsPerFrame(new Integer((String)params.get(CFG_PARAM_STEPS_PER_FRAME)).intValue());
         }
 
-        room.start();
         return room;
     }
 
@@ -248,38 +244,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         }
 
         return tmp;
-    }
-
-    // synchronized playerListSubscribed
-    synchronized private void sendUpdate(final String command, final Element elemen,
-            final boolean isSnapshot) {
-
-        try {
-
-            if ( listener == null ) {
-                return ;
-            }
-
-            if (!playerListSubscribed) {
-                return;
-            }
-
-            if ( tracer != null && tracer.isTraceEnabled()) {
-                tracer.trace(command +" '" + elemen.getName() + "'.");
-            }
-            logger.debug("Update list " + ITEM_NAME_PLAYERS_LIST + " " + command + " " + elemen.getName());
-
-            HashMap<String, String> update = new HashMap<String, String>();
-
-            update.put(FIELD_KEY, elemen.getName());
-            update.put(FIELD_COMMAND, command);
-            elemen.addFieldsTo(update);
-
-            listener.update(ITEM_NAME_PLAYERS_LIST, update, isSnapshot);
-
-        } catch (Exception e) {
-            logger.warn("Exception in "+command+" procedure.", e);
-        }
     }
 
     synchronized private void setSubscribed() {
