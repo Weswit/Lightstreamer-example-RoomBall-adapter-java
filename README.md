@@ -80,23 +80,21 @@ Now your "RoomBall" folder is ready to be deployed in the Lightstreamer server, 
 1. Make sure you have installed Lightstreamer Server, as explained in the GETTING_STARTED.TXT file in the installation home directory.
 2. Make sure that Lightstreamer Server is not running.
 3. Copy the "RoomBall" directory and all of its files to the "adapters" subdirectory in your Lightstreamer Server installation home directory.
-4. [Optional] Supply a specific "LS_ChatTileDemo_Logger" and "LS_demos_Logger" category in logback configuration <"Lightstreamer/conf/lightstreamer_log_conf.xml>.
+4. [Optional] Supply a specific "LS_RoomDemo_Logger" and "LS_demos_Logger" category in logback configuration <"Lightstreamer/conf/lightstreamer_log_conf.xml>.
 5. Lightstreamer Server is now ready to be launched.
 
-Please test your Adapter with the [client](https://github.com/Weswit/Lightstreamer-example-ChatTile-adapter-java#clients-using-this-adapter) below.
+Please test your Adapter with the [client](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter) below.
 
 # See Also #
 
 ## Clients using this Adapter ##
 
-* [Lightstreamer Chat Demo Client for JavaScript](https://github.com/Weswit/Lightstreamer-example-ChatTile-client-javascript)
+* [Lightstreamer Room-Ball Demo Client for JavaScript](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript)
 
 ## Related projects ##
 
-* [Lightstreamer Chat Demo Adapter](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-java)
-* [Lightstreamer Reusable Metadata Adapter in Java](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java)
-* [Lightstreamer Instant Messenger Demo Adapter](https://github.com/Weswit/Lightstreamer-example-Messenger-adapter-java)
-* [Lightstreamer Messenger Demo Client for JavaScript](https://github.com/Weswit/Lightstreamer-example-Messenger-client-javascript)
+* [Lightstreamer 3D World Demo Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
+* [Lightstreamer 3D World Demo Client](https://github.com/Weswit/Lightstreamer-example-3DWorld-client-javascript)
 
 # Lightstreamer Compatibility Notes #
 
