@@ -19,7 +19,8 @@
 package com.lightstreamer.adapters.RoomBall;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,28 +29,52 @@ import org.jbox2d.dynamics.World;
 
 public class Box2DRoom implements Room {
 
-    // Member Fields -----------------------------------------------------------
-
     private static final int MAX_NUM_OF_PLAYERS = 200;
-
     private static final int PLAYER_SPEED = 200000;
-
     private static final int MAX_NOW_STATS = 1780;
 
-    /**
-     * Map of Players indexed by name.
-     */
-    private final ConcurrentHashMap<String, Player> players =
-            new ConcurrentHashMap<String, Player>();
+    // Member Fields -----------------------------------------------------------
 
+    /**
+     * Map of Player(s) indexed by name.
+     * Is guarded by 'this' and every change must result in a Event to be
+     * published, before an other change can occur. In other words, the order of
+     * the Event(s) must be consistent with the order of the changes on 'players'.
+     * For example an update followed by a delete of the same Player, must result
+     * in a sequence of Event(s), where the first Event is an 'Update', followed
+     * by the 'Delete'. If it was possible that the 'Delete' precedes the 'Update,
+     * the 'Update' will be treated as an 'Add' and, as a result' the Player will
+     * be added again.
+     */
+    private final Map<String, Player> players = new HashMap<String, Player>();
+
+    /**
+     * The ball used to play
+     * Is guarded by 'this' and every change must result in a Event to be
+     * published, before an other change can occur. In other words, the order of
+     * the Event(s) must be consistent with the order of the changes on 'ball'.
+     */
     private final Ball ball;
 
+    /**
+     * The interface used to publish events
+     */
     private volatile Publisher publisher;
 
+    /**
+     * The physical world where the Player(s) and the Ball move.
+     */
     private final World m_world;
 
+    /**
+     * The engine that actually keeps the world moving
+     */
     private final RoomEngine engine = new RoomEngine();
 
+    /**
+     * The Executor used to publish the Even(s) to the DataAdapter and to the
+     * LS Server
+     */
     private final Executor publishExecutor;
 
     private final Logger logger;
@@ -183,7 +208,7 @@ public class Box2DRoom implements Room {
     }
 
     @Override
-    public void dispatchCommand(String name, String msg) {
+    synchronized public void dispatchCommand(String name, String msg) {
 
         Player player = players.get(name);
         if ( player == null ) {
@@ -223,7 +248,7 @@ public class Box2DRoom implements Room {
 
         String actualName = computeName(proposedName, players.keySet());
         Player player = new PlayerFactory().createElement(m_world, actualName, usrAgent);
-        players.putIfAbsent(player.getName(), player);
+        players.put(player.getName(), player);
 
         publishAdd(player);
         logger.info("Added player '" + actualName + "'");
