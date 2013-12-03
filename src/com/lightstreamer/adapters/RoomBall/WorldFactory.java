@@ -33,7 +33,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 class WorldFactory {
 
     public static final int WORLD_SIZE_X = 1000;
-    public static final int WORLD_SIZE_Y =  800;
+    public static final int WORLD_SIZE_Y =  550;
 
     private static final int  bRangeX = WORLD_SIZE_X;
     private static final int  bRangeY = WORLD_SIZE_Y;
