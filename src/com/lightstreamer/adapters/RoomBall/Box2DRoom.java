@@ -50,7 +50,7 @@ public class Box2DRoom implements Room {
 
     private final RoomEngine engine = new RoomEngine();
 
-    private final Executor executor;
+    private final Executor publishExecutor;
 
     private final Logger logger;
 
@@ -98,7 +98,7 @@ public class Box2DRoom implements Room {
 
         setFrameRate(DEFAULT_FRAME_RATE);
 
-        executor = Executors.newSingleThreadExecutor();
+        publishExecutor = Executors.newSingleThreadExecutor();
     }
 
     // Nested Class ------------------------------------------------------------
@@ -325,11 +325,11 @@ public class Box2DRoom implements Room {
         element.accept(eventCreator);
         final Event event = eventCreator.getEvent();
 
-        executor.execute(new PublishEventTask(event));
+        publishExecutor.execute(new PublishEventTask(event));
     }
 
     private void publishEOS() {
-        executor.execute(new PublishEOSTask());
+        publishExecutor.execute(new PublishEOSTask());
     }
 
     synchronized private void sendUpdates() {
