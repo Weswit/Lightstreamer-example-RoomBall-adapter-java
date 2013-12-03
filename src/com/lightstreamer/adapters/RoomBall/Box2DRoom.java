@@ -82,7 +82,7 @@ public class Box2DRoom implements Room {
 
     static private Box2DRoom instance = null;
 
-    static public Box2DRoom getInstance() {
+    synchronized static public Box2DRoom getInstance() {
         if (instance == null) {
             instance = new Box2DRoom(new NullPublisher(), new WorldFactory().createWorld());
         }
