@@ -66,7 +66,7 @@ public class Player extends AbstractElement {
     }
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ElementVisitor visitor) {
         visitor.visit(this);
     }
 

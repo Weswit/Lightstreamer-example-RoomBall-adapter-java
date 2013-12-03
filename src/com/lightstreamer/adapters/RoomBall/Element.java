@@ -38,6 +38,6 @@ public interface  Element {
 
     public void synchWithWorld();
 
-    public void accept(Visitor visitor);
+    public void accept(ElementVisitor visitor);
 
 }

@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Visit an Element and compose the corresponding Event
  */
-public class EventComposer implements Visitor {
+public class EventComposer implements ElementVisitor {
 
     private static final String CMD_ADD = "ADD";
     private static final String CMD_UPDATE = "UPDATE";

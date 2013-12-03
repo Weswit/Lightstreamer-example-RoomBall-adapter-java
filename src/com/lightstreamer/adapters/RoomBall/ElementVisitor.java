@@ -18,7 +18,7 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-public interface Visitor {
+public interface ElementVisitor {
 
     public void visit(Player player);
 
