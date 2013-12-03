@@ -46,7 +46,6 @@ public class Box2DRoom implements Room {
 
     private volatile Publisher publisher;
 
-    // Setup world
     private final World m_world;
 
     private final RoomEngine engine = new RoomEngine();
@@ -307,19 +306,19 @@ public class Box2DRoom implements Room {
 
 
     private void publishAdd(Element element) {
-        publish(element, new AddEventCreator());
+        publish(element, EventCreator.createAddEventComposer());
     }
 
     private void publishDelete(Element element) {
-        publish(element, new DeleteEventCreator());
+        publish(element, EventCreator.createDeleteEventComposer());
     }
 
     private void publishUpdate(Element element) {
-        publish(element, new UpdateEventCreator());
+        publish(element, EventCreator.createUpdateEventComposer());
     }
 
     private void publishTouch(Element element) {
-        publish(element, new TouchEventCreator());
+        publish(element, EventCreator.createTouchEventComposer());
     }
 
     private void publish(Element element, EventCreator eventCreator) {

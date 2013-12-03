@@ -21,21 +21,46 @@ package com.lightstreamer.adapters.RoomBall;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Visit an Element and compose the corresponding Event
+ */
 public class EventCreator implements Visitor {
+
+    private static final String CMD_ADD = "ADD";
+    private static final String CMD_UPDATE = "UPDATE";
+    private static final String CMD_DELETE = "DELETE";
+
+    // Member Fields -----------------------------------------------------------
 
     private final String command;
     private final boolean isSnapshot;
 
-    protected static final String CMD_ADD = "ADD";
-    protected static final String CMD_UPDATE = "UPDATE";
-    protected static final String CMD_DELETE = "DELETE";
+    private Event event = null;
 
-    Event event;
+    // Constructor and Creation Methods ----------------------------------------
 
-    public EventCreator(String command, boolean isSnapshot) {
+    private EventCreator(String command, boolean isSnapshot) {
         this.command = command;
         this.isSnapshot = isSnapshot;
     }
+
+
+    public static EventCreator createAddEventComposer() {
+        return new EventCreator(CMD_ADD, false);
+    }
+
+    public static EventCreator createDeleteEventComposer() {
+        return new EventCreator(CMD_DELETE, false);
+    }
+
+    public static EventCreator createUpdateEventComposer() {
+        return new EventCreator(CMD_UPDATE, false);
+    }
+    public static EventCreator createTouchEventComposer() {
+        return new EventCreator(CMD_ADD, true);
+    }
+
+    // Public Methods ----------------------------------------------------------
 
     @Override
     public void visit(Player player) {
