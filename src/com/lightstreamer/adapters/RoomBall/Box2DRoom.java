@@ -306,22 +306,22 @@ public class Box2DRoom implements Room {
 
 
     private void publishAdd(Element element) {
-        publish(element, EventCreator.createAddEventComposer());
+        publish(element, EventComposer.createAddEventComposer());
     }
 
     private void publishDelete(Element element) {
-        publish(element, EventCreator.createDeleteEventComposer());
+        publish(element, EventComposer.createDeleteEventComposer());
     }
 
     private void publishUpdate(Element element) {
-        publish(element, EventCreator.createUpdateEventComposer());
+        publish(element, EventComposer.createUpdateEventComposer());
     }
 
     private void publishTouch(Element element) {
-        publish(element, EventCreator.createTouchEventComposer());
+        publish(element, EventComposer.createTouchEventComposer());
     }
 
-    private void publish(Element element, EventCreator eventCreator) {
+    private void publish(Element element, EventComposer eventCreator) {
         element.accept(eventCreator);
         final Event event = eventCreator.getEvent();
 

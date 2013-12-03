@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Visit an Element and compose the corresponding Event
  */
-public class EventCreator implements Visitor {
+public class EventComposer implements Visitor {
 
     private static final String CMD_ADD = "ADD";
     private static final String CMD_UPDATE = "UPDATE";
@@ -39,25 +39,25 @@ public class EventCreator implements Visitor {
 
     // Constructor and Creation Methods ----------------------------------------
 
-    private EventCreator(String command, boolean isSnapshot) {
+    private EventComposer(String command, boolean isSnapshot) {
         this.command = command;
         this.isSnapshot = isSnapshot;
     }
 
 
-    public static EventCreator createAddEventComposer() {
-        return new EventCreator(CMD_ADD, false);
+    public static EventComposer createAddEventComposer() {
+        return new EventComposer(CMD_ADD, false);
     }
 
-    public static EventCreator createDeleteEventComposer() {
-        return new EventCreator(CMD_DELETE, false);
+    public static EventComposer createDeleteEventComposer() {
+        return new EventComposer(CMD_DELETE, false);
     }
 
-    public static EventCreator createUpdateEventComposer() {
-        return new EventCreator(CMD_UPDATE, false);
+    public static EventComposer createUpdateEventComposer() {
+        return new EventComposer(CMD_UPDATE, false);
     }
-    public static EventCreator createTouchEventComposer() {
-        return new EventCreator(CMD_ADD, true);
+    public static EventComposer createTouchEventComposer() {
+        return new EventComposer(CMD_ADD, true);
     }
 
     // Public Methods ----------------------------------------------------------
