@@ -41,7 +41,7 @@ public class Player extends AbstractElement {
 
     public Player(String name, String usrAgent, Body body) {
         super(name, body);
-        this.usrAgent = usrAgent;
+        setUsrAgent(usrAgent);
     }
 
     // Public Method -----------------------------------------------------------
@@ -74,7 +74,7 @@ public class Player extends AbstractElement {
         return usrAgent;
     }
 
-    public void  setUsrAgent(String usrAgent) {
+    final public void  setUsrAgent(String usrAgent) {
         this.usrAgent = usrAgent;
         usrAgentChanged = true;
     }
