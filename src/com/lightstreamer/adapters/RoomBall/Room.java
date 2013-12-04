@@ -24,7 +24,7 @@ public interface Room {
 
     public void stop();
 
-    public String addPlayer(String proposedName, String userAgent) throws RoomException;
+    public void addPlayer(String proposedName, String userAgent) throws RoomException;
 
     public void removePlayer(String name);
 

@@ -20,9 +20,11 @@ package com.lightstreamer.adapters.RoomBall;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -39,6 +41,8 @@ import com.lightstreamer.interfaces.metadata.NotificationException;
 import com.lightstreamer.interfaces.metadata.TableInfo;
 
 public class RoomBallMetaAdapter extends LiteralBasedProvider {
+
+    private static final int MAX_NUM_OF_PLAYERS = 200;
 
     public static final String ROOM_DEMO_LOGGER_NAME = "LS_demos_Logger.RoomDemo";
     public static final String TRACER_LOGGER = "LS_RoomDemo_Logger.tracer";
@@ -72,8 +76,8 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             new ConcurrentHashMap<String,Map<String,String>>();
 
     /**
-     * map of player's nicknames indexed by session id
-     * There can be only one player per session
+     * map of player's names indexed by session id.
+     * There can be only one player per session.
      */
     private final ConcurrentHashMap<String, String> nicksns =
             new ConcurrentHashMap<String, String>();
@@ -84,21 +88,87 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     private final ConcurrentHashMap<String, String> usrAgnts =
             new ConcurrentHashMap<String, String>();
 
+    /**
+     * The room where the players live
+     */
+    private final Room room;
 
+    /**
+     * The Executor used to deliver the messages to the Room
+     */
+    private final Executor messageDeliveryExecutor;
+
+    /**
+     * scheduled executor used to recurrently publish the bandwidth.
+     */
+    // TODO static?
     private final static ScheduledExecutorService executor =
             Executors.newSingleThreadScheduledExecutor();
 
+    // TODO static?
     private final static ConcurrentHashMap<String, PollsBandwidth> checkBandWidths =
             new ConcurrentHashMap<String, PollsBandwidth>();
 
     private int jmxPort = 9999;
 
-    private final Room room;
+    // Inner Classes -----------------------------------------------------------
+
+    class NotifyNickNameTask implements Runnable {
+
+        private final String sessionID;
+        private final String name;
+
+        public NotifyNickNameTask(String sessionID, String name) {
+            super();
+            this.sessionID = sessionID;
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            notifyNickName(sessionID, name);
+        }
+    }
+
+    class NotifyChatMessageTask implements Runnable {
+
+        private final String sessionID;
+        private final String message;
+
+        public NotifyChatMessageTask(String sessionID, String message) {
+            super();
+            this.sessionID = sessionID;
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            notifyChatMessage(sessionID, message);
+        }
+    }
+
+    class NotifyCommandTask implements Runnable {
+
+        private final String sessionID;
+        private final String message;
+
+        public NotifyCommandTask(String sessionID, String message) {
+            super();
+            this.sessionID = sessionID;
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            notifyCommand(sessionID, message);
+        }
+    }
 
     // Constructor -------------------------------------------------------------
 
     public RoomBallMetaAdapter() {
         room = Box2DRoom.getInstance();
+        messageDeliveryExecutor = Executors.newSingleThreadExecutor();
     }
 
     // Public Methods ----------------------------------------------------------
@@ -152,10 +222,12 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     @Override
-    public void notifySessionClose(String sessionID) throws NotificationException {
-        sessions.remove(sessionID);
+    synchronized public void notifySessionClose(String sessionID) throws NotificationException {
 
-        String deadmanwalking = nicksns.get(sessionID);
+        sessions.remove(sessionID);
+        usrAgnts.remove(sessionID);
+
+        String deadmanwalking = nicksns.remove(sessionID);
         if (deadmanwalking != null) {
             try {
                 room.removePlayer(deadmanwalking);
@@ -163,17 +235,14 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                 logger.warn(e);
             }
         }
-
-        nicksns.remove(sessionID);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked" })
     @Override
-    public void notifyNewSession(String user, String sessionID, Map sessionInfo) throws CreditsException, NotificationException {
-
-        manageUserAgent(sessionID, sessionInfo);
+    synchronized public void notifyNewSession(String user, String sessionID, Map sessionInfo) throws CreditsException, NotificationException {
 
         sessions.put(sessionID, sessionInfo);
+        addUserAgent(sessionID, sessionInfo, usrAgnts);
     }
 
     @Override
@@ -193,6 +262,9 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         }
     }
 
+    /**
+     * The method should perform fast and the message processing is done asynchronously.
+     */
     @Override
     public void notifyUserMessage(String user, String sessionID, String message)
             throws CreditsException {
@@ -201,26 +273,62 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                 return ;
             }
 
+            if (sessions.get(sessionID) == null) {
+                logger.warn("Message received from not-existent session '" + sessionID + "'.");
+                return;
+            }
+
             tracer.debug("Received message '"+message+"' from player '" + user + "', sessionId '"+sessionID+"'.");
 
             if (message.startsWith("n|") ) {
-                String res = notifyNickName(sessionID, removeTypeFrom(message));
 
-                if (res.equalsIgnoreCase("nan")) {
-                    throw new CreditsException(-6, "I'm not a number! I'm a free man!");
-                } else if (res.equalsIgnoreCase("ball")) {
-                    throw new CreditsException(-1, "Srsly? A ball?");
-                } else if (res.equalsIgnoreCase("overcrowed")) {
+                message = removeTypeFrom(message);
+
+                if (nicksns.size() >= MAX_NUM_OF_PLAYERS) {
+                    logger.warn("Unable to add player: Room is overcrowded.");
                     throw new CreditsException(-2700, "Too many users. Please try again.");
-                } else if (res.equalsIgnoreCase(ERROR)) {
+                }
+
+                final String proposedName = getNickNameFrom(message);
+                if (proposedName.equals(ERROR)) {
                     throw new CreditsException(-2710, "Error logging in.");
-                } else if (!res.equalsIgnoreCase("")) {
-                    throw new CreditsException(-2720, res);
+                }
+
+                if (!isNaN(proposedName)) {
+                    throw new CreditsException(-6, "I'm not a number! I'm a free man!");
+                }
+
+                if (proposedName.indexOf(NAME_PREFIX_BALL) == 0) {
+                    throw new CreditsException(-1, "Srsly? A ball?");
+                }
+
+                if (nicksns.containsKey(sessionID)) {
+                    // duplicated message; it should be avoided when possible
+                    String actualNickName = nicksns.get(sessionID);
+
+                    if (!actualNickName.equalsIgnoreCase(proposedName)) {
+                        throw new CreditsException(-2720, actualNickName);
+                        // brings back to the case where the name has been
+                        // changed, causing the client to receive a non
+                        // blocking error.
+                    }
+                }
+
+                String recommendedName = getRecommendedName(proposedName, nicksns.values());
+
+                messageDeliveryExecutor.execute(new NotifyNickNameTask(sessionID, recommendedName));
+
+                if (!recommendedName.equalsIgnoreCase(proposedName)) {
+                    throw new CreditsException(-2720, recommendedName);
+                    // brings back to the case where the name has been
+                    // changed, causing the client to receive a non
+                    // blocking error.
                 }
             } else if ( message.startsWith("m|") ) {
-                notifyChatMessage(sessionID, removeTypeFrom(message));
+                message = removeTypeFrom(message);
+                messageDeliveryExecutor.execute(new NotifyChatMessageTask(sessionID, message));
             } else {
-                notifyCommand(sessionID, message);
+                messageDeliveryExecutor.execute(new NotifyCommandTask(sessionID, message));
             }
         } catch (CreditsException e) {
             throw e;
@@ -230,6 +338,8 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         }
     }
 
+    // Private Methods ---------------------------------------------------------
+
     /**
      *
      * @param sessionID
@@ -237,101 +347,60 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
      * @return An empty string if the nickmame has been accepted, or the
      * actual name if it has been changed.
      */
-    protected String notifyNickName(String sessionID, String message) {
-
+    synchronized private void notifyNickName(String sessionID, String nickname) {
         try {
-
-            final String nickname = getNickNameFrom(message);
-            if (nickname.equals(ERROR)) {
-                return ERROR;
-            }
-
-            if (!isNaN(nickname)) {
-                return "nan";
-            }
-
-            if (nickname.indexOf(NAME_PREFIX_BALL) == 0) {
-                return "ball";
-            }
-
-            String ip = getIp(sessionID);
-            if (ip.isEmpty()) {
-                logger.warn("New player '" + nickname + "' message received from non-existent session '" + sessionID + "'.");
-            } else {
-                tracer.debug("New player '" + nickname + "' message from ip " + ip );
-            }
-
-            if (nicksns.containsKey(sessionID)) {
-                // duplicated message; it should be avoided when possible
-                String actualNickName = nicksns.get(sessionID);
-
-                if ( actualNickName.equalsIgnoreCase(nickname)) {
-                    actualNickName = "";
-                }
-                return actualNickName;
-                // returning the nickname instead of the empty string brings
-                // back to the case where the name has been changed, causing
-                // the client to receive a non blocking error.
-            }
-
+            tracer.debug("New player '" + nickname + "' message from ip " + getIp(sessionID, sessions) );
             String userAgent = ( usrAgnts.get(sessionID) != null ? usrAgnts.get(sessionID) : "undetected");
-
-
-            String actualNickName = room.addPlayer(nickname, userAgent);
-
-            nicksns.put(sessionID, actualNickName);
-
-            if ( actualNickName.equalsIgnoreCase(nickname)) {
-                actualNickName = "";
-            }
-            return actualNickName;
+            room.addPlayer(nickname, userAgent);
+            nicksns.put(sessionID, nickname);
         } catch (RoomException e) {
             logger.warn("Unable to add player: " + e.getMessage());
-            return "overcrowed";
         } catch (Exception e) {
             logger.warn("Message not well formatted, skipped.", e);
-            return ERROR;
         }
     }
 
-    protected void notifyChatMessage(String sessionID, String message) throws Exception {
-        String player = getPlayerName(sessionID);
-        if (player == null) {
+    synchronized private void notifyChatMessage(String sessionID, String message) {
+        String playerName = nicksns.get(sessionID);
+        if (playerName == null) {
+            // the message might have come too early; we cannot fulfill it
+            tracer.warn("Received chat message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
             return;
         }
-
-        room.updatePlayerMsg(player, message);
+        tracer.debug("Received chat message from player '" + playerName + "' (ip: " + getIp(sessionID, sessions) + ").");
+        room.updatePlayerMsg(playerName, message);
     }
 
-    protected void notifyCommand(String sessionID, String message) throws Exception {
-        String player = getPlayerName(sessionID);
-        if (player == null) {
+    synchronized private void notifyCommand(String sessionID, String message) {
+        String playerName = nicksns.get(sessionID);
+        if (playerName == null) {
+            // the message might have come too early; we cannot fulfill it
+            tracer.warn("Received command message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
             return;
         }
-
-        room.dispatchCommand(player, message);
-        logger.debug("Input command from user " + player + ": " + message);
+        tracer.debug("Received command message from player '" + playerName + "' (ip: " + getIp(sessionID, sessions) + ").");
+        room.dispatchCommand(playerName, message);
+        logger.debug("Input command from user " + playerName + ": " + message);
     }
-
-    // Private Methods ---------------------------------------------------------
 
     @SuppressWarnings("rawtypes")
-    private void manageUserAgent(String sessionID, Map sessionInfo) {
+    private void addUserAgent(String sessionID, Map sessionInfo, Map<String, String> usrAgnts) {
         try {
             String ua = (String) sessionInfo.get(FIELD_USER_AGENT);
-
-            logger.info("Usr Agent: " + ua);
-
-            if (ua != null) {
-                Parser uaParser = new Parser();
-                Client c = uaParser.parse(ua);
-                if ( c.userAgent.family.equals("Android") ) {
-                    usrAgnts.put(sessionID, c.userAgent.family + " Browser on " + c.os.family);
-                } else {
-                    usrAgnts.put(sessionID, c.userAgent.family + " on " + c.os.family);
-                }
-                logger.info("Saved: " + c.userAgent.family + " on " + c.os.family + ", for " + sessionID);
+            if (ua == null) {
+                logger.info("User Agent not present for session " + sessionID);
+                return;
             }
+
+            logger.info("User Agent: " + ua);
+            Parser uaParser = new Parser();
+            Client c = uaParser.parse(ua);
+            String userAgent = ( c.userAgent.family.equals("Android") ?
+                c.userAgent.family + " Browser on " + c.os.family :
+                c.userAgent.family + " on " + c.os.family);
+
+            usrAgnts.put(sessionID, userAgent);
+            logger.info("Saved: " + userAgent + ", for " + sessionID);
 
         } catch (IOException ioe) {
             logger.warn("Unable to retrieve user agent for sesion '" + sessionID + "'");
@@ -361,24 +430,12 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         return i != str.length();
     }
 
-    private String getPlayerName(String sessionID) {
-        String playerName = nicksns.get(sessionID);
-        if (playerName == null) {
-            // the message might have come too early; we cannot fulfill it
-            tracer.warn("Received message from incomplete player (ip: " + getIp(sessionID) + ").");
-            return null;
-        }
-
-        tracer.debug("Received message from player '" + playerName + "' (ip: " + getIp(sessionID) + ").");
-        return playerName;
-    }
-
-    private String getIp(String sessionID) {
+    private String getIp(String sessionID, Map<String,Map<String,String>> sessions) {
         String ip = "";
 
         Map<String,String> sessionInfo = sessions.get(sessionID);
         if (sessionInfo == null) {
-             logger.warn("Message received from non-existent session '" + sessionID + "'");
+             logger.warn("Unable to retrieve IP: session '" + sessionID + "' does not exist!");
         } else {
             ip =  sessionInfo.get(FIELD_REMOTE_IP);
         }
@@ -388,6 +445,33 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     private String getNickNameFrom(String message) {
         final String nickname = message;
         return nickname;
+    }
+
+    /**
+     * Compute a name that is not already present in the name list.
+     * The returned name is based on the proposed one.
+     * @param proposedName The proposed name
+     * @param namesNotAllowed The set of names form with the computed name must be
+     * different.
+     * @return a name not preset in namesNotAllowed
+     */
+    private String getRecommendedName(String proposedName, Collection<String> namesNotAllowed) {
+        if (proposedName.startsWith(Ball.NAME_BALL)) {
+            proposedName = "NotABall";
+        }
+
+        String recommendedName;
+        if (!namesNotAllowed.contains(proposedName) ){
+            recommendedName = proposedName;
+        } else {
+            int ik = 2;
+            while ( namesNotAllowed.contains(proposedName+ik)  ){
+                ik++;
+            }
+
+            recommendedName = proposedName+ik;
+        }
+        return recommendedName;
     }
 
 }

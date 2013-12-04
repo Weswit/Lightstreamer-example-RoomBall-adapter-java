@@ -18,7 +18,6 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -28,8 +27,6 @@ import org.apache.log4j.Logger;
 import org.jbox2d.dynamics.World;
 
 public class Box2DRoom implements Room {
-
-    private static final int MAX_NUM_OF_PLAYERS = 200;
     private static final int PLAYER_SPEED = 200000;
     private static final int MAX_NOW_STATS = 1780;
 
@@ -78,7 +75,6 @@ public class Box2DRoom implements Room {
     private final Executor publishExecutor;
 
     private final Logger logger;
-
 
     private static final int BASE_RATE = 10;
 
@@ -238,21 +234,18 @@ public class Box2DRoom implements Room {
     }
 
     @Override
-    synchronized public String addPlayer(String proposedName, String usrAgent)
+    synchronized public void addPlayer(String name, String usrAgent)
             throws RoomException {
 
-        if (players.size() >= MAX_NUM_OF_PLAYERS) {
-            logger.warn("Room is overcrowded; subscription rejected.");
-            throw new RoomException("Room is overcrowded.");
+        if (players.containsKey(name)) {
+            throw new RoomException("Unable to add player: '"+name+"' already exists!.");
         }
 
-        String actualName = computeName(proposedName, players.keySet());
-        Player player = new PlayerFactory().createElement(m_world, actualName, usrAgent);
+        Player player = new PlayerFactory().createElement(m_world, name, usrAgent);
         players.put(player.getName(), player);
 
         publishAdd(player);
-        logger.info("Added player '" + actualName + "'");
-        return actualName;
+        logger.info("Added player '" + name + "'");
     }
 
     @Override
@@ -381,32 +374,4 @@ public class Box2DRoom implements Room {
             logger.warn("Unexpected error in send overall Bandwidth information.", e);
         }
     }
-
-    /**
-     * Compute a name that is not already present in the name list.
-     * The returned name is based on the proposed one.
-     * @param proposedName The proposed name
-     * @param namesNotAllowed The set of names form with the computed name must be
-     * different.
-     * @return a name not preset in namesNotAllowed
-     */
-    private String computeName(String proposedName, Collection<String> namesNotAllowed) {
-        if (proposedName.startsWith(Ball.NAME_BALL)) {
-            proposedName = "NotABall";
-        }
-
-        String actualName;
-        if (!namesNotAllowed.contains(proposedName) ){
-            actualName = proposedName;
-        } else {
-            int ik = 2;
-            while ( namesNotAllowed.contains(proposedName+ik)  ){
-                ik++;
-            }
-
-            actualName = proposedName+ik;
-        }
-        return actualName;
-    }
-
 }
