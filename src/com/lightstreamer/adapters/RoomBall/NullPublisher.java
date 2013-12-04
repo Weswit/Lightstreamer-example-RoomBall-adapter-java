@@ -18,6 +18,8 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
+import java.util.Map;
+
 public class NullPublisher implements Publisher {
 
     @Override
@@ -29,10 +31,7 @@ public class NullPublisher implements Publisher {
     }
 
     @Override
-    public void postOverallBandwidth() {
+    public void postBandwith(String userName, Map<String, String> itemEvent) {
     }
 
-    @Override
-    public void flushStatistics() {
-    }
 }

@@ -19,6 +19,7 @@
 package com.lightstreamer.adapters.RoomBall;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.concurrent.ScheduledFuture;
 
@@ -26,24 +27,35 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import org.apache.log4j.Logger;
+
 public class PollsBandwidth implements Runnable {
 
-    private boolean end = false;
+    private static final String FIELD_CURRENT_BANDWIDTH = "currentBandwidth";
 
     private MBeanServer server;
     private ObjectName sessionMBeanName = null;
     private String user = "";
-    private ScheduledFuture task = null;
+    private ScheduledFuture<?> task = null;
 
-    public ScheduledFuture getTask() {
+    private Publisher publisher;
+
+
+    /**
+     * should be supplied by logback configuration.
+     */
+    private Logger tracer = null;
+
+
+    public ScheduledFuture<?> getTask() {
         return task;
     }
 
-    public void setTask(ScheduledFuture task) {
+    public void setTask(ScheduledFuture<?> task) {
         this.task = task;
     }
 
-    public PollsBandwidth(String sessionId, String user, int port) {
+    public PollsBandwidth(String sessionId, String user, int port, Publisher publisher) {
         try {
             /*
             JMXServiceURL url = new JMXServiceURL("service:jmx:jmxmp://localhost:"+port);
@@ -76,6 +88,9 @@ public class PollsBandwidth implements Runnable {
             sessionMBeanName = new ObjectName("com.lightstreamer", props);
 
             this.user = user;
+            this.publisher = publisher;
+            tracer = Logger.getLogger(RoomBallMetaAdapter.TRACER_LOGGER);
+
         } catch (Exception e) {
             // Skip. Eventually log here ...
         }
@@ -102,12 +117,31 @@ public class PollsBandwidth implements Runnable {
     @Override
     public void run () {
         try {
-            Double d = (Double)server.getAttribute(sessionMBeanName, "CurrentBandwidthKbps");
-            RoomBallAdapter.postBandwith(this.user, d);
+            Double bandwidth = (Double)server.getAttribute(sessionMBeanName, "CurrentBandwidthKbps");
+
+            if ( tracer != null && tracer.isDebugEnabled()) {
+                tracer.debug("Update current bandwidth for user " + user + ": " + bandwidth);
+            }
+
+            final HashMap<String, String> update = new HashMap<String, String>();
+            update.put(FIELD_CURRENT_BANDWIDTH, roundToSend(bandwidth, 2));
+
+            publisher.postBandwith(this.user, update);
         } catch (Exception e) {
             // send update ERR.
             // this.listener.postBandwith(BAND_PREFIX+this.user, new Double(0));
         }
+    }
+
+    private String roundToSend(double value, int pre) {
+        String tmp = ""+value;
+
+        int cut = tmp.length() - tmp.indexOf(".") - 1;
+        if (pre < cut  ) {
+            tmp = tmp.substring(0, tmp.length() - (cut - pre));
+        }
+
+        return tmp;
     }
 
 }

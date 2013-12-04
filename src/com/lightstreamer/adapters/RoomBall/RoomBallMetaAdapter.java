@@ -21,14 +21,10 @@ package com.lightstreamer.adapters.RoomBall;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -97,17 +93,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
      * The Executor used to deliver the messages to the Room
      */
     private final Executor messageDeliveryExecutor;
-
-    /**
-     * scheduled executor used to recurrently publish the bandwidth.
-     */
-    // TODO static?
-    private final static ScheduledExecutorService executor =
-            Executors.newSingleThreadScheduledExecutor();
-
-    // TODO static?
-    private final static ConcurrentHashMap<String, PollsBandwidth> checkBandWidths =
-            new ConcurrentHashMap<String, PollsBandwidth>();
 
     private int jmxPort = 9999;
 
@@ -196,26 +181,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         return true;
     }
 
-    public static void killBandChecker(String itemName) {
-        PollsBandwidth p = checkBandWidths.get(itemName);
-        if ( p != null ) {
-            p.getTask().cancel(true);
-            checkBandWidths.remove(itemName);
-        }
-    }
-
-    public static double getTotalBandwidthOut() {
-        double sum = 0.0;
-        Enumeration<PollsBandwidth> e = checkBandWidths.elements();
-        PollsBandwidth p;
-        while ( e.hasMoreElements() ) {
-            p = e.nextElement();
-            sum += p.getBandwidth();
-        }
-
-        return sum;
-    }
-
     @Override
     public int getDistinctSnapshotLength(String item) {
         return 0;
@@ -252,13 +217,10 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     @Override
     public void notifyNewTables(String user, String sessionID, TableInfo[] tables) throws CreditsException {
 
-        if ( tables[0].getId().startsWith(ITEM_NAME_PREFIX_BAND) ) {
-            String usr = tables[0].getId().substring(ITEM_NAME_PREFIX_BAND.length());
-            PollsBandwidth p = new PollsBandwidth(sessionID, usr, this.jmxPort);
-
-            ScheduledFuture<?> tsk = executor.scheduleAtFixedRate(p,10,2000,TimeUnit.MILLISECONDS);
-            p.setTask(tsk);
-            checkBandWidths.put(tables[0].getId(), p);
+        String itemName = tables[0].getId();
+        if ( itemName.startsWith(ITEM_NAME_PREFIX_BAND) ) {
+            String usr = itemName.substring(ITEM_NAME_PREFIX_BAND.length());
+            room.addPollsBandwidth(sessionID, itemName, usr, jmxPort);
         }
     }
 

@@ -108,7 +108,7 @@ abstract public class AbstractElement implements Element {
 
     // Constants ---------------------------------------------------------------
 
-    private static final double EPSILON = 0.01;
+    private static final double EPSILON = 0.1;
 
     // Member Fields  ----------------------------------------------------------
 

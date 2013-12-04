@@ -18,15 +18,15 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
+import java.util.Map;
+
 
 public interface Publisher {
 
-    public void publish(Event itemEvent);
+    public void publish(Event event);
 
     public void publishEOS();
 
-    public void postOverallBandwidth();
-
-    public void flushStatistics();
+    public void postBandwith(String userName, Map<String, String> itemEvent);
 
 }

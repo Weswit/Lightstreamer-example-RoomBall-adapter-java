@@ -19,7 +19,6 @@
 package com.lightstreamer.adapters.RoomBall;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -38,8 +37,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     private static final String ITEM_NAME_PLAYERS_LIST = "Players_list";
     private static final String ITEM_NAME_PREFIX_BAND = "My_Band_";
 
-    private static final String FIELD_CURRENT_BANDWIDTH = "currentBandwidth";
-
     private Logger logger;
 
     /**
@@ -50,8 +47,7 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     /**
      * The listener of updates set by Lightstreamer Kernel.
      */
-    // TODO static?
-    private static volatile ItemEventListener listener = null;
+    private volatile ItemEventListener listener = null;
 
     /**
      * Flag indicating whether the item "Players_list" is subscribed or not
@@ -62,10 +58,14 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
      */
     volatile private boolean playerListSubscribed = false;
 
-    private static WorldsStatistics stats = null;
-
+    /**
+     * The room where the players and the ball move
+     */
     private Room room;
 
+    /**
+     * The handle received by subscription and used to send messages to.
+     */
     private volatile Object playerListHandle = null;
 
     // Public Methods Implementing DataProvider Methods ------------------------
@@ -83,8 +83,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         } catch (Exception e) {
             System.out.println("Loggers failed to load: " + e);
         }
-
-        stats = new WorldsStatistics(0);
 
         room = initRoom(params);
 
@@ -135,32 +133,11 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
             playerListSubscribed = false;
             room.stop();
         } else if (itemName.startsWith(ITEM_NAME_PREFIX_BAND)) {
-            RoomBallMetaAdapter.killBandChecker(itemName);
+            room.killBandChecker(itemName);
         }
     }
 
     // Public Methods Implementing Publisher Methods ---------------------------
-
-    @Override
-    public void postOverallBandwidth() {
-        double totBandwidth = RoomBallMetaAdapter.getTotalBandwidthOut();
-
-        if ( tracer != null && tracer.isDebugEnabled()) {
-            tracer.debug("Statistics - Total bandwidth for the demo: " + totBandwidth + ".");
-        }
-
-        // update statistics.
-        stats.feedBandwidth(totBandwidth);
-        return ;
-    }
-
-    @Override
-    public void flushStatistics() {
-        if ( tracer != null ) {
-            tracer.debug(stats);
-        }
-        stats.reset();
-    }
 
     @Override
     public void publish(Event event) {
@@ -193,8 +170,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     @Override
     public void publishEOS() {
 
-        //If we have a listener create a new Runnable to be used as a task to pass the
-        //new update to the listener
         if (listener == null) {
             return;
         }
@@ -208,18 +183,13 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         listener.smartEndOfSnapshot(playerListHandle);
     }
 
-    // TODO static?
-    public static void postBandwith(String userName, Double d) {
+    @Override
+    public void postBandwith(String userName, Map<String, String> itemEvent) {
         if (listener == null) {
             return;
         }
-        if ( tracer != null && tracer.isDebugEnabled()) {
-            tracer.debug("Update current bandwidth for user " + userName + ": " + d);
-        }
 
-        final HashMap<String, String> update = new HashMap<String, String>();
-        update.put(FIELD_CURRENT_BANDWIDTH, roundToSend(d, 2));
-        listener.update(ITEM_NAME_PREFIX_BAND+ userName,update,false);
+        listener.update(ITEM_NAME_PREFIX_BAND+userName, itemEvent, false);
     }
 
     // Private Methods ---------------------------------------------------------
@@ -240,17 +210,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         }
 
         return room;
-    }
-
-    private static String roundToSend(double value, int pre) {
-        String tmp = ""+value;
-
-        int cut = tmp.length() - tmp.indexOf(".") - 1;
-        if (pre < cut  ) {
-            tmp = tmp.substring(0, tmp.length() - (cut - pre));
-        }
-
-        return tmp;
     }
 
 }

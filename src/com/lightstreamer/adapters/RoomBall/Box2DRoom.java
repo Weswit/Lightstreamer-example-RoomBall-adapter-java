@@ -18,10 +18,15 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.jbox2d.dynamics.World;
@@ -76,6 +81,12 @@ public class Box2DRoom implements Room {
 
     private final Logger logger;
 
+    /**
+     * should be supplied by logback configuration.
+     */
+    private static Logger tracer = null;
+
+
     private static final int BASE_RATE = 10;
 
     private double factorWorld;
@@ -98,6 +109,20 @@ public class Box2DRoom implements Room {
     // Counts ticks from last statistics flush post
     private int nowStats = 0;
 
+    /**
+     * scheduled executor used to recurrently publish the bandwidth.
+     */
+    private final ScheduledExecutorService bandwidthExecutor =
+            Executors.newSingleThreadScheduledExecutor();
+
+    /**
+     * Map of PollsBandwidth indexed by item name [itemName = "My_Band_"+userName]
+     */
+    private final ConcurrentHashMap<String, PollsBandwidth> checkBandWidths =
+            new ConcurrentHashMap<String, PollsBandwidth>();
+
+    private WorldsStatistics stats = null;
+
     // Constructor -------------------------------------------------------------
 
     static private Box2DRoom instance = null;
@@ -112,6 +137,7 @@ public class Box2DRoom implements Room {
     private Box2DRoom(Publisher publisher, World world) {
         super();
         logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
+        tracer = Logger.getLogger(RoomBallMetaAdapter.TRACER_LOGGER);
 
         this.publisher = publisher;
         this.m_world = world;
@@ -120,6 +146,9 @@ public class Box2DRoom implements Room {
         setFrameRate(DEFAULT_FRAME_RATE);
 
         publishExecutor = Executors.newSingleThreadExecutor();
+
+        stats = new WorldsStatistics(0);
+
     }
 
     // Nested Class ------------------------------------------------------------
@@ -296,6 +325,23 @@ public class Box2DRoom implements Room {
         publishUpdate(player);
     }
 
+    @Override
+    public void addPollsBandwidth(String sessionID, String itemName, String usr, int jmxPort) {
+
+        PollsBandwidth pollsBandwidth = new PollsBandwidth(sessionID, usr, jmxPort, publisher);
+        checkBandWidths.put(itemName, pollsBandwidth);
+        ScheduledFuture<?> tsk = bandwidthExecutor.scheduleAtFixedRate(pollsBandwidth,10,2000,TimeUnit.MILLISECONDS);
+        pollsBandwidth.setTask(tsk);
+    }
+
+    @Override
+    public void killBandChecker(String itemName) {
+        PollsBandwidth p = checkBandWidths.remove(itemName);
+        if ( p != null ) {
+            p.getTask().cancel(true);
+        }
+    }
+
     // Private Methods ---------------------------------------------------------
 
     private void moveWorld() {
@@ -322,7 +368,6 @@ public class Box2DRoom implements Room {
         ball.synchWithWorld();
     }
 
-
     private void publishAdd(Element element) {
         publish(element, EventComposer.createAddEventComposer());
     }
@@ -340,6 +385,9 @@ public class Box2DRoom implements Room {
     }
 
     private void publish(Element element, EventComposer eventCreator) {
+        if (!element.isChanged()) {
+            return;
+        }
         element.accept(eventCreator);
         final Event event = eventCreator.getEvent();
 
@@ -363,10 +411,10 @@ public class Box2DRoom implements Room {
         try {
             // Post overall bandwidth utilization.
             if ( ticksCount++ > ((2000/frameRate)* factorWorld) ) {
-                publisher.postOverallBandwidth();
+                storeOverallBandwidthStatistics();
                 ticksCount = 0;
                 if ( nowStats++ > MAX_NOW_STATS ) {
-                    publisher.flushStatistics();
+                    flushStatistics();
                     nowStats = 0;
                 }
             }
@@ -374,4 +422,36 @@ public class Box2DRoom implements Room {
             logger.warn("Unexpected error in send overall Bandwidth information.", e);
         }
     }
+
+    private void storeOverallBandwidthStatistics() {
+        double totBandwidth = getTotalBandwidthOut();
+
+        if ( tracer != null && tracer.isDebugEnabled()) {
+            tracer.debug("Statistics - Total bandwidth for the demo: " + totBandwidth + ".");
+        }
+
+        // update statistics.
+        stats.feedBandwidth(totBandwidth);
+        return ;
+    }
+
+    private double getTotalBandwidthOut() {
+        double sum = 0.0;
+        Enumeration<PollsBandwidth> e = checkBandWidths.elements();
+        PollsBandwidth p;
+        while ( e.hasMoreElements() ) {
+            p = e.nextElement();
+            sum += p.getBandwidth();
+        }
+
+        return sum;
+    }
+
+    private void flushStatistics() {
+        if ( tracer != null ) {
+            tracer.debug(stats);
+        }
+        stats.reset();
+    }
+
 }

@@ -34,4 +34,8 @@ public interface Room {
 
     public void touchAllElements();
 
+    public void addPollsBandwidth(String sessionID, String itemName, String usr, int jmxPort);
+
+    public void killBandChecker(String itemName);
+
 }

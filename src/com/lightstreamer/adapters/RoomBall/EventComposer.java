@@ -84,6 +84,7 @@ public class EventComposer implements ElementVisitor {
 
         event = new Event(itemEvent, isSnapshot);
 
+        player.setAsNotChanged();
     }
 
     @Override
@@ -102,6 +103,7 @@ public class EventComposer implements ElementVisitor {
 
         event = new Event(itemEvent, isSnapshot);
 
+        ball.setAsNotChanged();
     }
 
     public Event getEvent() {
