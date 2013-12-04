@@ -50,15 +50,23 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     /**
      * The listener of updates set by Lightstreamer Kernel.
      */
-    private static ItemEventListener listener = null;
+    // TODO static?
+    private static volatile ItemEventListener listener = null;
 
-    private boolean playerListSubscribed = false;
+    /**
+     * Flag indicating whether the item "Players_list" is subscribed or not
+     * It is not guarded by any lock to avoid to lock the call to
+     * listener.smartUpdate(..). If, due to a race condition, smartUpdate is
+     * called after an unsubscribe, the server will ignore the update, and
+     * may log a warning.
+     */
+    volatile private boolean playerListSubscribed = false;
 
     private static WorldsStatistics stats = null;
 
     private Room room;
 
-    private Object playerListHandle = null;
+    private volatile Object playerListHandle = null;
 
     // Public Methods Implementing DataProvider Methods ------------------------
 
@@ -103,8 +111,8 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
          if (itemName.startsWith(ITEM_NAME_PLAYERS_LIST)) {
              logger.debug("Subscribe request for '" + ITEM_NAME_PLAYERS_LIST + "'.");
-             setSubscribed();
-             this.playerListHandle = handle;
+             playerListSubscribed = true;
+             playerListHandle = handle;
              room.start();
              room.touchAllElements();
 
@@ -124,7 +132,7 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
         if (itemName.startsWith(ITEM_NAME_PLAYERS_LIST)) {
             logger.debug("Unsubscribe request for '" + itemName + "'.");
-            setUnsubscribed();
+            playerListSubscribed = false;
             room.stop();
         } else if (itemName.startsWith(ITEM_NAME_PREFIX_BAND)) {
             RoomBallMetaAdapter.killBandChecker(itemName);
@@ -154,9 +162,8 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         stats.reset();
     }
 
-    // synchronized playerListSubscribed
     @Override
-    synchronized public void publish(Event event) {
+    public void publish(Event event) {
 
         try {
 
@@ -198,7 +205,7 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
         // call the update on the listener;
         // in case the listener has just been detached,
         // the listener should detect the case
-        listener.smartEndOfSnapshot(this.playerListHandle);
+        listener.smartEndOfSnapshot(playerListHandle);
     }
 
     // TODO static?
@@ -245,14 +252,5 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
         return tmp;
     }
-
-    synchronized private void setSubscribed() {
-        playerListSubscribed = true;
-    }
-
-    synchronized private void setUnsubscribed() {
-        playerListSubscribed = false;
-    }
-
 
 }
