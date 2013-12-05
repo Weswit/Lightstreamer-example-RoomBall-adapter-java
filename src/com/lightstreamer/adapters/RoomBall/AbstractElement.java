@@ -127,6 +127,7 @@ abstract public class AbstractElement implements Element {
     public AbstractElement(String name,Body body) {
         this.name = name;
         this.body = body;
+        synchWithWorld();
     }
 
     // Public Methods ----------------------------------------------------------
