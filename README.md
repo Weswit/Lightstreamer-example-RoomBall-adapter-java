@@ -1,8 +1,12 @@
 # Lightstreamer Room-Ball Demo Adapter #
 
-This project includes the resources needed to develop the Metadata and Data Adapters for the [Lightstreamer Room-Ball Demo](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server. Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.
-The <b>Room-Ball Demo</b> implements a simple multiplayer soccer game, where the physics engine runs on the server side, and the positional data for all the players are transmitted to all the clients in real time via a Lightstreamer server, and the clients are pure renderers.<br>
-<br>
+This project includes the resources needed to develop the Metadata and Data Adapters for the [Lightstreamer Room-Ball Demo](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server. Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.<br>
+The <b>Room-Ball Demo</b> implements a simple pure Server-side Mode multiplayer soccer game:
+- Physics runs on server side only
+- User commands are streamed from clients to server
+- Position updates are streamed from server to clients
+- Clients are pure renderer (no feedback, no prediction, no interpolation)<br>
+
 The project is comprised of source code and a deployment example.
 
 ## Java Data Adapter and MetaData Adapter ##
