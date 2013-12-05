@@ -287,6 +287,7 @@ public class Box2DRoom implements Room {
         }
 
         player.close(m_world);
+        player.setAsChanged();
 
         publishDelete(player);
         logger.info("Removed player '"+ name +"'");
