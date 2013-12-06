@@ -27,7 +27,7 @@ Otherwise follow these steps:
 * Get the `jbox2d-library-2.2.1.1.jar` file from [JBox2D](https://code.google.com/p/jbox2d/)
 * Build the jar `LS_RoomBall_Demo_Adapters.jar` with commands like these:
 ```sh
- >javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.15.jar;lib/ls-adapter-interface.jar;lib/ls-generic-adapters.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBallDemo/RoomBallAdapter.java
+ >javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.15.jar;lib/ls-adapter-interface.jar;lib/ls-generic-adapters.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBall/RoomBallAdapter.java
  
  >jar cvf LS_RoomBall_Demo_Adapters.jar -C tmp_classes com
 ```
@@ -37,10 +37,10 @@ Otherwise follow these steps:
 You have to create a specific folder to deploy the Room-Ball Demo Adapters otherwise get the ready-made `RommBallDemo` deploy folder from `deploy.zip` of the [latest release](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/releases) of this project.<br>
 If you choose to create you own folder, follow the next steps, otherwise skip them. 
 
-1. Create a new folder, let's call it `RoomBallDemo`, and a `lib` folder inside it.
+1. Create a new folder, let's call it `RoomBall`, and a `lib` folder inside it.
 2. Copy the jar file of the adapter `LS_RoomBall_Demo_Adapters.jar`, compiled in the previous section, in the newly created "lib" folder.
 3. Copy the files: `jbox2d-library-2.2.1.1.jar`, `ua-parser-1.2.2.jar` and `snakeyaml-1.11` from `Lightstreamer/lib` in the newly created `lib` folder.
-4. Create an `adapters.xml` file inside the `RoomBallDemo` folder and use the following content (this is an example configuration, you can modify it to your liking):
+4. Create an `adapters.xml` file inside the `RoomBall` folder and use the following content (this is an example configuration, you can modify it to your liking):
 ```xml      
 <?xml version="1.0"?>
 <adapters_conf id="ROOMBALL">
@@ -79,11 +79,11 @@ If you choose to create you own folder, follow the next steps, otherwise skip th
 ```
 <br> 
 
-Now your `RoomBallDemo` folder is ready to be deployed in the Lightstreamer server, please follow these steps:<br>
+Now your `RoomBall` folder is ready to be deployed in the Lightstreamer server, please follow these steps:<br>
 
 1. Make sure you have installed Lightstreamer Server, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
 2. Make sure that Lightstreamer Server is not running.
-3. Copy the `RoomBallDemo` directory and all of its files to the `adapters` subdirectory in your Lightstreamer Server installation home directory.
+3. Copy the `RoomBall` directory and all of its files to the `adapters` subdirectory in your Lightstreamer Server installation home directory.
 4. [Optional] Supply a specific "LS_RoomDemo_Logger" and "LS_demos_Logger" category in logback configuration `Lightstreamer/conf/lightstreamer_log_conf.xml`.
 5. Lightstreamer Server is now ready to be launched.
 
