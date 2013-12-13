@@ -5,7 +5,10 @@ The <b>Room-Ball Demo</b> implements a simple pure Server-side Mode multiplayer 
 - Physics runs on server side only
 - User commands are streamed from clients to server
 - Position updates are streamed from server to clients
-- Clients are pure renderer (no feedback, no prediction, no interpolation)<br>
+- Clients are pure renderer (no feedback, no prediction, no interpolation)
+ 
+For more information, see this slide deck from the HTML5 Developer Conference:<br>
+http://www.slideshare.net/alinone/slides-html5-devconf-20131022
 
 The project is comprised of source code and a deployment example.
 
