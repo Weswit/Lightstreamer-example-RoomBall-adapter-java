@@ -1,4 +1,4 @@
-# Lightstreamer - Room-Ball Demo - Java SE Adapter #
+# Lightstreamer - Room-Ball Demo - Java Adapter #
 
 This project includes the resources needed to develop the Metadata and Data Adapters for the [Room-Ball Demo](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server. Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.<br>
 The <b>Room-Ball Demo</b> implements a simple pure Server-side Mode multiplayer soccer game:
@@ -98,8 +98,8 @@ Please test your Adapter with the [client](https://github.com/Weswit/Lightstream
 
 ## Related projects ##
 
-* [Lightstreamer - Reusable Metadata Adapters - Java SE Adapter](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java)
-* [Lightstreamer - 3D World Demo - Java SE Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
+* [Lightstreamer - Reusable Metadata Adapters - Java Adapter](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java)
+* [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
 * [Lightstreamer - 3D World Demo - Three.js Client](https://github.com/Weswit/Lightstreamer-example-3DWorld-client-javascript)
 
 # Lightstreamer Compatibility Notes #
