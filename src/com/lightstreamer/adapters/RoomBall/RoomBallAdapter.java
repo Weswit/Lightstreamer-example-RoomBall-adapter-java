@@ -40,11 +40,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     private Logger logger;
 
     /**
-     * should be supplied by logback configuration.
-     */
-    private static Logger tracer = null;
-
-    /**
      * The listener of updates set by Lightstreamer Kernel.
      */
     private volatile ItemEventListener listener = null;
@@ -76,10 +71,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
         try {
             logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
-
-            tracer = Logger.getLogger(RoomBallMetaAdapter.TRACER_LOGGER);
-            tracer.info("LS_RoomDemo_Logger start.");
-
         } catch (Exception e) {
             System.out.println("Loggers failed to load: " + e);
         }
@@ -155,9 +146,6 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
                 return;
             }
 
-            if ( tracer != null && tracer.isTraceEnabled()) {
-                tracer.trace(event.getCommand() +" '" + event.getKey() + "'.");
-            }
             logger.debug("Update list " + ITEM_NAME_PLAYERS_LIST + " " + event.getCommand() + " " + event.getKey());
 
             listener.smartUpdate(playerListHandle, event.getItemEvent(), event.isSnapshot());

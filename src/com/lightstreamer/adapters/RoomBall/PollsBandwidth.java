@@ -40,11 +40,10 @@ public class PollsBandwidth implements Runnable {
 
     private Publisher publisher;
 
-
     /**
      * should be supplied by logback configuration.
      */
-    private Logger tracer = null;
+    private Logger logger = null;
 
 
     public ScheduledFuture<?> getTask() {
@@ -89,7 +88,7 @@ public class PollsBandwidth implements Runnable {
 
             this.user = user;
             this.publisher = publisher;
-            tracer = Logger.getLogger(RoomBallMetaAdapter.TRACER_LOGGER);
+            logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
 
         } catch (Exception e) {
             // Skip. Eventually log here ...
@@ -119,8 +118,8 @@ public class PollsBandwidth implements Runnable {
         try {
             Double bandwidth = (Double)server.getAttribute(sessionMBeanName, "CurrentBandwidthKbps");
 
-            if ( tracer != null && tracer.isDebugEnabled()) {
-                tracer.debug("Update current bandwidth for user " + user + ": " + bandwidth);
+            if ( logger != null && logger.isDebugEnabled()) {
+                logger.debug("Update current bandwidth for user " + user + ": " + bandwidth);
             }
 
             final HashMap<String, String> update = new HashMap<String, String>();

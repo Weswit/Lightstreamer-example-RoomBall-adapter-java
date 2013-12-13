@@ -81,12 +81,6 @@ public class Box2DRoom implements Room {
 
     private final Logger logger;
 
-    /**
-     * should be supplied by logback configuration.
-     */
-    private static Logger tracer = null;
-
-
     private static final int BASE_RATE = 10;
 
     private double factorWorld;
@@ -137,7 +131,6 @@ public class Box2DRoom implements Room {
     private Box2DRoom(Publisher publisher, World world) {
         super();
         logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
-        tracer = Logger.getLogger(RoomBallMetaAdapter.TRACER_LOGGER);
 
         this.publisher = publisher;
         this.m_world = world;
@@ -427,10 +420,6 @@ public class Box2DRoom implements Room {
     private void storeOverallBandwidthStatistics() {
         double totBandwidth = getTotalBandwidthOut();
 
-        if ( tracer != null && tracer.isDebugEnabled()) {
-            tracer.debug("Statistics - Total bandwidth for the demo: " + totBandwidth + ".");
-        }
-
         // update statistics.
         stats.feedBandwidth(totBandwidth);
         return ;
@@ -449,9 +438,7 @@ public class Box2DRoom implements Room {
     }
 
     private void flushStatistics() {
-        if ( tracer != null ) {
-            tracer.debug(stats);
-        }
+        logger.debug(stats);
         stats.reset();
     }
 

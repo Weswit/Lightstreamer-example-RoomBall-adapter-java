@@ -40,8 +40,8 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
     private static final int MAX_NUM_OF_PLAYERS = 200;
 
-    public static final String ROOM_DEMO_LOGGER_NAME = "LS_demos_Logger.RoomDemo";
-    public static final String TRACER_LOGGER = "LS_RoomDemo_Logger.tracer";
+    public static final String ROOM_DEMO_LOGGER_NAME = "LS_demos_Logger.RoomBallDemo";
+    public static final String TRACER_LOGGER = "LS_RoomBallDemo_Logger.tracer";
 
     private static final String FIELD_USER_AGENT = "USER_AGENT";
     private static final String FIELD_REMOTE_IP = "REMOTE_IP";
@@ -166,6 +166,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
         try{
             tracer = Logger.getLogger(TRACER_LOGGER);
+            tracer.info(TRACER_LOGGER + " start.");
         } catch (Exception e) {
             logger.warn("Error on tracer initialization.",  e);
         }
@@ -240,8 +241,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                 return;
             }
 
-            tracer.debug("Received message '"+message+"' from player '" + user + "', sessionId '"+sessionID+"'.");
-
             if (message.startsWith("n|") ) {
 
                 message = removeTypeFrom(message);
@@ -311,7 +310,13 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
      */
     synchronized private void notifyNickName(String sessionID, String nickname) {
         try {
-            tracer.debug("New player '" + nickname + "' message from ip " + getIp(sessionID, sessions) );
+            String ip = getIp(sessionID, sessions);
+            if (ip.isEmpty()) {
+                logger.warn("New player '" + nickname + "' message received from non-existent session '" + sessionID + "'.");
+            } else {
+                tracer.info("New player '" + nickname + "' from ip " + ip );
+            }
+
             String userAgent = ( usrAgnts.get(sessionID) != null ? usrAgnts.get(sessionID) : "undetected");
             room.addPlayer(nickname, userAgent);
             nicksns.put(sessionID, nickname);
@@ -326,10 +331,11 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         String playerName = nicksns.get(sessionID);
         if (playerName == null) {
             // the message might have come too early; we cannot fulfill it
-            tracer.warn("Received chat message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
+            logger.warn("Received chat message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
             return;
         }
-        tracer.debug("Received chat message from player '" + playerName + "' (ip: " + getIp(sessionID, sessions) + ").");
+        tracer.info("Chat Message from '" + playerName + "' (ip: " + getIp(sessionID, sessions) + "), session '"+sessionID+"': " + message);
+
         room.updatePlayerMsg(playerName, message);
     }
 
@@ -337,10 +343,11 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         String playerName = nicksns.get(sessionID);
         if (playerName == null) {
             // the message might have come too early; we cannot fulfill it
-            tracer.warn("Received command message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
+            logger.warn("Received command message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
             return;
         }
         tracer.debug("Received command message from player '" + playerName + "' (ip: " + getIp(sessionID, sessions) + ").");
+
         room.dispatchCommand(playerName, message);
         logger.debug("Input command from user " + playerName + ": " + message);
     }
@@ -397,7 +404,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
         Map<String,String> sessionInfo = sessions.get(sessionID);
         if (sessionInfo == null) {
-             logger.warn("Unable to retrieve IP: session '" + sessionID + "' does not exist!");
+            logger.warn("Unable to retrieve IP: session '" + sessionID + "' does not exist!");
         } else {
             ip =  sessionInfo.get(FIELD_REMOTE_IP);
         }
