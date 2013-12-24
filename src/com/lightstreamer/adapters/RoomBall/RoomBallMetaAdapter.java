@@ -334,7 +334,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             logger.warn("Received chat message from incomplete player (ip: " + getIp(sessionID, sessions) + ").");
             return;
         }
-        tracer.info("Chat Message from '" + playerName + "' (ip: " + getIp(sessionID, sessions) + "), session '"+sessionID+"': " + message);
+        tracer.info("RoomBall Chat Message from '" + playerName + "' (ip: " + getIp(sessionID, sessions) + "), session '"+sessionID+"': " + message);
 
         room.updatePlayerMsg(playerName, message);
     }
