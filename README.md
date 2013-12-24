@@ -1,4 +1,5 @@
 # Lightstreamer - Room-Ball Demo - Java Adapter #
+<!-- START DESCRIPTION Room-Ball Demo -->
 
 This project includes the resources needed to develop the Metadata and Data Adapters for the [Room-Ball Demo](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server. Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.<br>
 The <b>Room-Ball Demo</b> implements a simple pure Server-side Mode multiplayer soccer game:
@@ -19,6 +20,7 @@ The adapter receives input commands from Lightstreamer server, which forwards me
 - changing last message for the player.
 
 The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
+<!-- END DESCRIPTION Room-Ball Demo -->
 
 # Build #
 
@@ -45,6 +47,7 @@ If you choose to create you own folder, follow the next steps, otherwise skip th
 2. Copy the jar file of the adapter `LS_RoomBall_Demo_Adapters.jar`, compiled in the previous section, in the newly created "lib" folder.
 3. Copy the files: `jbox2d-library-2.2.1.1.jar`, `ua-parser-1.2.2.jar` and `snakeyaml-1.11` from `Lightstreamer/lib` in the newly created `lib` folder.
 4. Create an `adapters.xml` file inside the `RoomBall` folder and use the following content (this is an example configuration, you can modify it to your liking):
+
 ```xml      
 <?xml version="1.0"?>
 <adapters_conf id="ROOMBALL">
@@ -96,6 +99,7 @@ Please test your Adapter with the [client](https://github.com/Weswit/Lightstream
 # See Also #
 
 ## Clients using this Adapter ##
+<!-- START RELATED_ENTRIES -->
 
 * [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript)
 
@@ -105,6 +109,7 @@ Please test your Adapter with the [client](https://github.com/Weswit/Lightstream
 * [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
 * [Lightstreamer - 3D World Demo - Three.js Client](https://github.com/Weswit/Lightstreamer-example-3DWorld-client-javascript)
 
+<!-- END RELATED_ENTRIES -->
 # Lightstreamer Compatibility Notes #
 
 - Compatible with Lightstreamer SDK for Java Adapters since 5.1
