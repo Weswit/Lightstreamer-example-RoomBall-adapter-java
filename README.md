@@ -98,12 +98,12 @@ Please test your Adapter with the [client](https://github.com/Weswit/Lightstream
 
 # See Also #
 
-## Clients using this Adapter ##
+## Clients Using This Adapter ##
 <!-- START RELATED_ENTRIES -->
 
 * [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript)
 
-## Related projects ##
+## Related Projects ##
 
 * [Lightstreamer - Reusable Metadata Adapters - Java Adapter](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java)
 * [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
