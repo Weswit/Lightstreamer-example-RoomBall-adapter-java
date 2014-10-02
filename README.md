@@ -21,15 +21,14 @@ The project is comprised of source code and a deployment example.
 
 #### Java Data Adapter and MetaData Adapter
 
-A Java Adapter implementing both the [SmartDataProvider](http://www.lightstreamer.com/docs/adapter_java_api/com/lightstreamer/interfaces/data/SmartDataProvider.html) interface and the [MetadataProviderAdapter](http://www.lightstreamer.com/docs/adapter_java_api/com/lightstreamer/interfaces/metadata/MetadataProviderAdapter.html) interface, to inject data into Lightstreamer server with real time information about the movement of every player in the room. The adapter accepts also message submission for the chat room.<br>
+A Java Adapter implementing both the [SmartDataProvider](http://www.lightstreamer.com/docs/adapter_java_api/com/lightstreamer/interfaces/data/SmartDataProvider.html) interface and the [MetadataProviderAdapter](http://www.lightstreamer.com/docs/adapter_java_api/com/lightstreamer/interfaces/metadata/MetadataProviderAdapter.html) interface, to inject data into Lightstreamer server with real-time information about the movement of every player in the room. The adapter accepts also message submission for the chat room.<br>
 The adapter receives input commands from Lightstreamer server, which forwards messages arrived from clients to the adapter in relation to:
-* movement commands;
-* changing last message for the player.
+* Movement commands;
+* Changing last message for the player.
 
 The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
 
 <!-- END DESCRIPTION lightstreamer-example-roomball-adapter-java -->
-
 
 ### The Adapter Set Configuration
 
@@ -78,7 +77,7 @@ Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Pr
 
 ## Install
 
-If you want to install a version of the *Room-Ball Demo* in your local Lightstreamer Server, follow these steps.
+If you want to install a version of the *Room-Ball Demo* in your local Lightstreamer Server, follow these steps:
 
 * Download *Lightstreamer Server* (Lightstreamer Server comes with a free non-expiring demo license for 20 connected users) from [Lightstreamer Download page](http://www.lightstreamer.com/download.htm), and install it, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
 * Make sure that Lightstreamer Server is not running.
@@ -90,7 +89,7 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 
 ## Build
 
-To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#install) section above, follow these steps.
+To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#install) section above, follow these steps:
 
 * Download this project.
 * Get the `ls-adapter-interface.jar`, `ls-generic-adapters.jar`, and `log4j-1.2.15.jar` files from the [latest Lightstreamer distribution](http://www.lightstreamer.com/download), and copy them into the `lib` directory.
@@ -121,4 +120,3 @@ To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using th
 ## Lightstreamer Compatibility Notes
 
 * Compatible with Lightstreamer SDK for Java Adapters since 5.1
-
