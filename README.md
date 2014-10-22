@@ -73,7 +73,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
 </adapters_conf>
 ```
 
-Please refer [here](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.
+Please refer [here](http://www.lightstreamer.com/docs/base/Lightstreamer/DOCS-SDKs/General%20Concepts.pdf) for more details about Lightstreamer Adapters.
 
 ## Install
 
@@ -83,7 +83,6 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 * Make sure that Lightstreamer Server is not running.
 * Get the `deploy.zip` file of the [latest release](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/releases), unzip it, and copy the `RoomBall` folder into the `adapters` folder of your Lightstreamer Server installation.
 * [Optional] Supply a specific "LS_RoomDemo_Logger" and "LS_demos_Logger" category in logback configuration `Lightstreamer/conf/lightstreamer_log_conf.xml`.
-* Copy the `ls-generic-adapters.jar` file from the `lib` directory of the sibling "Reusable_MetadataAdapters" SDK example to the `shared/lib` subdirectory in your Lightstreamer Server installation home directory.
 * Launch Lightstreamer Server.
 * Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter).
 
@@ -92,13 +91,13 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#install) section above, follow these steps:
 
 * Download this project.
-* Get the `ls-adapter-interface.jar`, `ls-generic-adapters.jar`, and `log4j-1.2.15.jar` files from the [latest Lightstreamer distribution](http://www.lightstreamer.com/download), and copy them into the `lib` directory.
+* Get the `ls-adapter-interface.jar` and `log4j-1.2.15.jar` files from the [latest Lightstreamer distribution](http://www.lightstreamer.com/download), and copy them into the `lib` directory.
 * Get the `ua-parser-1.2.2.jar` file from [ua_parser Java Library](https://github.com/tobie/ua-parser/tree/master/java) and copy it into the `lib` directory.
 * Get the `snakeyaml-1.11.jar` files from [SnakeYAML](https://code.google.com/p/snakeyaml/) and copy it into the `lib` directory.
 * Get the `jbox2d-library-2.2.1.1.jar` file from [JBox2D](https://code.google.com/p/jbox2d/) and copy it into the `lib` directory.
 * Create the `LS_RoomBall_Demo_Adapters.jar` with commands like these:
 ```sh
- >javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.15.jar;lib/ls-adapter-interface.jar;lib/ls-generic-adapters.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBall/RoomBallAdapter.java
+ >javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.15.jar;lib/ls-adapter-interface.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBall/RoomBallAdapter.java
  
  >jar cvf LS_RoomBall_Demo_Adapters.jar -C tmp_classes com
 ```
@@ -119,4 +118,5 @@ To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using th
 <!-- END RELATED_ENTRIES -->
 ## Lightstreamer Compatibility Notes
 
-* Compatible with Lightstreamer SDK for Java Adapters version 5.1.x
+* Compatible with Lightstreamer SDK for Java In-Process Adapters since 6.0
+- For a version of this example compatible with Lightstreamer SDK for Java Adapters version 5.1, please refer to [this tag](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/tree/for_Lightstreamer_5.1).
