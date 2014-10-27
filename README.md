@@ -67,7 +67,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
         <!--
           Maximum number of players in the room.
         -->
-        <param name="max_players">5</param>
+        <param name="max_players">200</param>
         
     </metadata_provider>
     
