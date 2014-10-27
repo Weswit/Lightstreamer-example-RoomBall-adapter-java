@@ -65,7 +65,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
         <param name="world_size_y">550</param>
         
         <!--
-          Maximum number of players in the room.
+          Maximum number of players allowed.
         -->
         <param name="max_players">200</param>
         
