@@ -38,12 +38,12 @@ import com.lightstreamer.interfaces.metadata.TableInfo;
 
 public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
-    private static final int MAX_NUM_OF_PLAYERS = 200;
-
     public static final String ROOM_DEMO_LOGGER_NAME = "LS_demos_Logger.RoomBallDemo";
+    
     public static final String TRACER_LOGGER = "LS_RoomBallDemo_Logger.tracer";
 
     private static final String FIELD_USER_AGENT = "USER_AGENT";
+    
     private static final String FIELD_REMOTE_IP = "REMOTE_IP";
 
     private static final String CFG_PARAM_JMX_PORT = "jmxPort";
@@ -53,6 +53,12 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     private static final String ERROR = "Error";
 
     private static final String NAME_PREFIX_BALL = "Ball-";
+    
+    private static final String WORLD_SIZE_X = "world_size_x";
+    
+    private static final String WORLD_SIZE_Y = "world_size_y";
+    
+    private static final String MAX_PLAYERS = "max_players";
 
     private static Logger logger;
 
@@ -87,8 +93,13 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     /**
      * The room where the players live
      */
-    private final Room room;
+    private Room room;
 
+    /**
+     * Max number of players in the room of Room-Ball demo
+     */
+    private static int max_num_of_players = 200;
+    
     /**
      * The Executor used to deliver the messages to the Room
      */
@@ -152,7 +163,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     // Constructor -------------------------------------------------------------
 
     public RoomBallMetaAdapter() {
-        room = Box2DRoom.getInstance();
         messageDeliveryExecutor = Executors.newSingleThreadExecutor();
     }
 
@@ -161,7 +171,9 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     @SuppressWarnings("rawtypes")
     @Override
     public void init(Map params, File configDir) {
-
+        int world_size_x = 0;
+        int world_size_y = 0;
+        
         logger = Logger.getLogger(ROOM_DEMO_LOGGER_NAME);
 
         try{
@@ -170,7 +182,24 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         } catch (Exception e) {
             logger.warn("Error on tracer initialization.",  e);
         }
-
+        
+        if (params.containsKey(WORLD_SIZE_X)) {
+            logger.info("World size (x) configured: " + params.get(WORLD_SIZE_X));
+            world_size_x = new Integer((String)params.get(WORLD_SIZE_X)).intValue();
+        }
+        
+        if (params.containsKey(WORLD_SIZE_Y)) {
+            logger.info("World size (y) configured: " + params.get(WORLD_SIZE_Y));
+            world_size_y = new Integer((String)params.get(WORLD_SIZE_Y)).intValue();
+        }
+        
+        if (params.containsKey(MAX_PLAYERS)) {
+            logger.info("World size (y) configured: " + params.get(MAX_PLAYERS));
+            max_num_of_players = new Integer((String)params.get(MAX_PLAYERS)).intValue();
+        }
+        
+        room = Box2DRoom.getInstance(world_size_x, world_size_y);
+        
         if (params.containsKey(CFG_PARAM_JMX_PORT)) {
             this.jmxPort = new Integer((String)params.get(CFG_PARAM_JMX_PORT)).intValue();
         }
@@ -186,7 +215,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     public int getDistinctSnapshotLength(String item) {
         return 0;
     }
-
+    
     @Override
     synchronized public void notifySessionClose(String sessionID) throws NotificationException {
 
@@ -216,8 +245,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     @Override
-    public void notifyNewTables(String user, String sessionID, TableInfo[] tables) throws CreditsException {
-
+    public void notifyNewTables(String user, String sessionID, TableInfo[] tables) throws CreditsException {        
         String itemName = tables[0].getId();
         if ( itemName.startsWith(ITEM_NAME_PREFIX_BAND) ) {
             String usr = itemName.substring(ITEM_NAME_PREFIX_BAND.length());
@@ -245,7 +273,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
                 message = removeTypeFrom(message);
 
-                if (nicksns.size() >= MAX_NUM_OF_PLAYERS) {
+                if (nicksns.size() >= max_num_of_players) {
                     logger.warn("Unable to add player: Room is overcrowded.");
                     throw new CreditsException(-2700, "Too many users. Please try again.");
                 }

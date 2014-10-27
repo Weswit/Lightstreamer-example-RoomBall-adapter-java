@@ -77,7 +77,11 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
         room = initRoom(params);
 
-        logger.info("RoomAdapter start!");
+        if (room == null) {
+            throw new DataProviderException("Room not ready!");
+        }
+        
+        logger.debug("RoomAdapter start!");
     }
 
     @Override
@@ -184,7 +188,13 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
     @SuppressWarnings("rawtypes")
     private Box2DRoom initRoom(Map params) {
+        
         Box2DRoom room = Box2DRoom.getInstance();
+        
+        if (room == null) {
+            return null;
+        }
+        
         room.setPublisher(this);
 
         if (params.containsKey(CFG_PARAM_FRAME_RATE)) {

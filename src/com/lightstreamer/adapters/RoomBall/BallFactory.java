@@ -45,7 +45,7 @@ class BallFactory {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
-        bodyDef.position.set(WorldFactory.WORLD_SIZE_X / 2, 0);
+        bodyDef.position.set(WorldFactory.bRangeX / 2, 0);
         bodyDef.angle = (float) (Math.PI);
         bodyDef.allowSleep = false;
         bodyDef.linearDamping = 0.3f;

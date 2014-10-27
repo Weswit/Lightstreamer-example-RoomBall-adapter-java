@@ -121,10 +121,14 @@ public class Box2DRoom implements Room {
 
     static private Box2DRoom instance = null;
 
-    synchronized static public Box2DRoom getInstance() {
+    synchronized static public Box2DRoom getInstance(int world_size_x, int world_size_y) {
         if (instance == null) {
-            instance = new Box2DRoom(new NullPublisher(), new WorldFactory().createWorld());
+            instance = new Box2DRoom(new NullPublisher(), new WorldFactory().createWorld(world_size_x, world_size_y));
         }
+        return instance;
+    }
+    
+    synchronized static public Box2DRoom getInstance() {
         return instance;
     }
 
@@ -267,7 +271,7 @@ public class Box2DRoom implements Room {
         players.put(player.getName(), player);
 
         publishAdd(player);
-        logger.info("Added player '" + name + "'");
+        logger.debug("Added player '" + name + "'");
     }
 
     @Override
@@ -283,7 +287,7 @@ public class Box2DRoom implements Room {
         player.setAsChanged();
 
         publishDelete(player);
-        logger.info("Removed player '"+ name +"'");
+        logger.debug("Removed player '"+ name +"'");
     }
 
     @Override

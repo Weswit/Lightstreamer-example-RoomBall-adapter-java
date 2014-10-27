@@ -53,8 +53,8 @@ class PlayerFactory {
         Body body = null;
 
         for (int i= 0; i < PLACEMENT_CYCLES_GIVEUP; i++) {
-            float x = randomizer.nextFloat() * WorldFactory.WORLD_SIZE_X;
-            float y = randomizer.nextFloat() * WorldFactory.WORLD_SIZE_Y;
+            float x = randomizer.nextFloat() * WorldFactory.bRangeX;
+            float y = randomizer.nextFloat() * WorldFactory.bRangeY;
             Body tmpBody = createBody(world, x, y);
             if (!collide(tmpBody, world)) {
                 body = tmpBody;

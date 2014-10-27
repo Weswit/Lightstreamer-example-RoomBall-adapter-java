@@ -32,18 +32,28 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 class WorldFactory {
 
-    public static final int WORLD_SIZE_X = 1000;
-    public static final int WORLD_SIZE_Y =  550;
+    private static final int WORLD_SIZE_X = 1000;
+    private static final int WORLD_SIZE_Y =  550;
 
-    private static final int  bRangeX = WORLD_SIZE_X;
-    private static final int  bRangeY = WORLD_SIZE_Y;
+    public static int  bRangeX = WORLD_SIZE_X;
+    public static int  bRangeY = WORLD_SIZE_Y;
     private static final int  bThick = 50;
-    private static final int  bSizeX = bRangeX + 2 * bThick;
-    private static final int  bSizeY = bRangeY + 2 * bThick;
+    private int  bSizeX = bRangeX + 2 * bThick;
+    private int  bSizeY = bRangeY + 2 * bThick;
 
     private final Logger logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
 
-    public World createWorld() {
+    public World createWorld(int world_size_x, int world_size_y) {
+        if ( world_size_x != 0 ) {
+            bRangeX = world_size_x;
+            bSizeX = bRangeX + 2 * bThick;
+        }
+        
+        if ( world_size_y != 0 ) {
+            bRangeY = world_size_y;
+            bSizeY = bRangeY + 2 * bThick;
+        }
+        
         Vec2  gravity = new Vec2(0, 0);
         World world = new World(gravity);
         addBoundariesTo(world);
