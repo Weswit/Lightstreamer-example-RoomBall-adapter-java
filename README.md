@@ -61,7 +61,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
           Any changes to these parameters involves actions on the client
           side for the drawing of the room.
         -->
-        <param name="world_size_x">700</param>
+        <param name="world_size_x">1000</param>
         <param name="world_size_y">550</param>
         
         <!--
