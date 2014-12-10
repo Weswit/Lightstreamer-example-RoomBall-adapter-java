@@ -31,6 +31,8 @@ import com.lightstreamer.interfaces.data.SubscriptionException;
 
 public class RoomBallAdapter implements SmartDataProvider, Publisher {
 
+    static final String ROOM_DEMO_LOGGER_NAME = "LS_demos_Logger.RoomBallDemo";
+    
     private static final String CFG_PARAM_FRAME_RATE = "frameRate";
     private static final String CFG_PARAM_STEPS_PER_FRAME = "stepsPerFrame";
 
@@ -70,7 +72,7 @@ public class RoomBallAdapter implements SmartDataProvider, Publisher {
     public void init(Map params, File configDir) throws DataProviderException {
 
         try {
-            logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
+            logger = Logger.getLogger(ROOM_DEMO_LOGGER_NAME);
         } catch (Exception e) {
             System.out.println("Loggers failed to load: " + e);
         }

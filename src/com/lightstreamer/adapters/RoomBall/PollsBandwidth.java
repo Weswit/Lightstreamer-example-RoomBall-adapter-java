@@ -88,7 +88,7 @@ public class PollsBandwidth implements Runnable {
 
             this.user = user;
             this.publisher = publisher;
-            logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
+            logger = Logger.getLogger(RoomBallAdapter.ROOM_DEMO_LOGGER_NAME);
 
         } catch (Exception e) {
             // Skip. Eventually log here ...

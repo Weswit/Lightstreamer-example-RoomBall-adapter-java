@@ -134,7 +134,7 @@ public class Box2DRoom implements Room {
 
     private Box2DRoom(Publisher publisher, World world) {
         super();
-        logger = Logger.getLogger(RoomBallMetaAdapter.ROOM_DEMO_LOGGER_NAME);
+        logger = Logger.getLogger(RoomBallAdapter.ROOM_DEMO_LOGGER_NAME);
 
         this.publisher = publisher;
         this.m_world = world;
