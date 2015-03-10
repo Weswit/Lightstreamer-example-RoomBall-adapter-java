@@ -40,11 +40,25 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
 <?xml version="1.0"?>
 <adapters_conf id="ROOMBALL">
 
+
+    <!--
+      Not all configuration options of an Adapter Set are exposed by this file. 
+      You can easily expand your configurations using the generic template, 
+      `DOCS-SDKs/sdk_adapter_java_inprocess/doc/adapter_conf_template/adapters.xml`,
+      as a reference.
+    -->
+    
     <metadata_adapter_initialised_first>Y</metadata_adapter_initialised_first>
 
     <metadata_provider>
         <adapter_class>com.lightstreamer.adapters.RoomBall.RoomBallMetaAdapter</adapter_class>
 
+        <!-- Optional for PortfolioMetadataAdapter.
+             Configuration file for the Adapter's own logging.
+             Logging is managed through log4j. -->
+        <param name="log_config">adapters_log_conf.xml</param>
+        <param name="log_config_refresh_seconds">10</param>
+  
         <!--
           TCP port on which Sun/Oracle's JMXMP connector will be
           listening.
@@ -57,17 +71,12 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
         </messages_pool>
         
         <!--
-          Dimensions of the world.
+          Dimensions of the world. 
           Any changes to these parameters involves actions on the client
           side for the drawing of the room.
         -->
         <param name="world_size_x">1000</param>
         <param name="world_size_y">550</param>
-        
-        <!--
-          Maximum number of players allowed.
-        -->
-        <param name="max_players">200</param>
         
     </metadata_provider>
     
@@ -101,7 +110,7 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 * Download *Lightstreamer Server* (Lightstreamer Server comes with a free non-expiring demo license for 20 connected users) from [Lightstreamer Download page](http://www.lightstreamer.com/download.htm), and install it, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
 * Make sure that Lightstreamer Server is not running.
 * Get the `deploy.zip` file of the [proper release](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/releases), unzip it, and copy the `RoomBall` folder into the `adapters` folder of your Lightstreamer Server installation.
-* [Optional] Supply a specific "LS_RoomDemo_Logger" and "LS_demos_Logger" category in logback configuration `Lightstreamer/conf/lightstreamer_log_conf.xml`.
+* [Optional]  Customize the specific "LS_RoomDemo_Logger" and "LS_demos_Logger" categories in log4j configuration file `RoomBall/adapters_log_conf.xml`.
 * Launch Lightstreamer Server.
 * Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter).
 

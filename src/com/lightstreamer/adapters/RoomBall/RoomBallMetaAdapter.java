@@ -27,6 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import ua_parser.Client;
 import ua_parser.Parser;
@@ -174,6 +175,16 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         int world_size_x = 0;
         int world_size_y = 0;
         
+        String logConfig = (String) params.get("log_config");
+        if (logConfig != null) {
+            File logConfigFile = new File(configDir, logConfig);
+            String logRefresh = (String) params.get("log_config_refresh_seconds");
+            if (logRefresh != null) {
+                DOMConfigurator.configureAndWatch(logConfigFile.getAbsolutePath(), Integer.parseInt(logRefresh) * 1000);
+            } else {
+                DOMConfigurator.configure(logConfigFile.getAbsolutePath());
+            }
+        }        
         logger = Logger.getLogger(ROOM_DEMO_LOGGER_NAME);
 
         try{
