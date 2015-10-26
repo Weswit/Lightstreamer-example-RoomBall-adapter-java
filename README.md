@@ -2,7 +2,7 @@
 
 <!-- START DESCRIPTION lightstreamer-example-roomball-adapter-java -->
 
-This project includes the resources needed to develop the Metadata and Data Adapters for the [Room-Ball Demo](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server.<br>
+This project includes the resources needed to develop the Metadata and Data Adapters for the [Room-Ball Demo](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-client-javascript) that is pluggable into Lightstreamer Server.<br>
 
 The *Room-Ball Demo* implements a simple pure Server-side Mode multiplayer soccer game:
 * Physics runs on server side only
@@ -26,7 +26,7 @@ The adapter receives input commands from Lightstreamer server, which forwards me
 * Movement commands;
 * Changing last message for the player.
 
-The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
+The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Lightstreamer/Lightstreamer-example-ReusableMetadata-adapter-java) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
 
 <!-- END DESCRIPTION lightstreamer-example-roomball-adapter-java -->
 
@@ -108,14 +108,14 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 
 * Download *Lightstreamer Server* (Lightstreamer Server comes with a free non-expiring demo license for 20 connected users) from [Lightstreamer Download page](http://www.lightstreamer.com/download.htm), and install it, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
 * Make sure that Lightstreamer Server is not running.
-* Get the `deploy.zip` file of the [proper release](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/releases), unzip it, and copy the `RoomBall` folder into the `adapters` folder of your Lightstreamer Server installation.
+* Get the `deploy.zip` file of the [proper release](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/releases), unzip it, and copy the `RoomBall` folder into the `adapters` folder of your Lightstreamer Server installation.
 * [Optional]  Customize the specific "LS_RoomDemo_Logger" and "LS_demos_Logger" categories in log4j configuration file `RoomBall/adapters_log_conf.xml`.
 * Launch Lightstreamer Server.
-* Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter).
+* Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter).
 
 ## Build
 
-To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java#install) section above, follow these steps:
+To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#install) section above, follow these steps:
 
 * Download this project.
 * Get the `ls-adapter-interface.jar` file from the [latest Lightstreamer distribution](http://www.lightstreamer.com/download), and copy them into the `lib` folder.
@@ -135,16 +135,16 @@ To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using th
 ### Clients Using This Adapter
 <!-- START RELATED_ENTRIES -->
 
-* [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Weswit/Lightstreamer-example-RoomBall-client-javascript)
+* [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-client-javascript)
 
 ### Related Projects
 
-* [Lightstreamer - Reusable Metadata Adapters - Java Adapter](https://github.com/Weswit/Lightstreamer-example-ReusableMetadata-adapter-java)
-* [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Weswit/Lightstreamer-example-3DWorld-adapter-java)
-* [Lightstreamer - 3D World Demo - Three.js Client](https://github.com/Weswit/Lightstreamer-example-3DWorld-client-javascript)
+* [Lightstreamer - Reusable Metadata Adapters - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-ReusableMetadata-adapter-java)
+* [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-3DWorld-adapter-java)
+* [Lightstreamer - 3D World Demo - Three.js Client](https://github.com/Lightstreamer/Lightstreamer-example-3DWorld-client-javascript)
 
 <!-- END RELATED_ENTRIES -->
 ## Lightstreamer Compatibility Notes
 
 * Compatible with Lightstreamer SDK for Java In-Process Adapters since 6.0
-- For a version of this example compatible with Lightstreamer SDK for Java Adapters version 5.1, please refer to [this tag](https://github.com/Weswit/Lightstreamer-example-RoomBall-adapter-java/tree/for_Lightstreamer_5.1).
+- For a version of this example compatible with Lightstreamer SDK for Java Adapters version 5.1, please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/tree/for_Lightstreamer_5.1).
