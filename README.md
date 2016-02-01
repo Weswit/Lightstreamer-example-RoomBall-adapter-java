@@ -125,9 +125,9 @@ To build your own version of `LS_RoomBall_Demo_Adapters.jar` instead of using th
 * Get the `jbox2d-library-2.2.1.1.jar` file from [JBox2D](https://code.google.com/p/jbox2d/) and copy it into the `lib` folder.
 * Create the `LS_RoomBall_Demo_Adapters.jar` with commands like these:
 ```sh
- >javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.17.jar;lib/ls-adapter-interface.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBall/RoomBallAdapter.java
- 
- >jar cvf LS_RoomBall_Demo_Adapters.jar -C tmp_classes com
+ > mkdir tmp_classes
+ > javac -source 1.7 -target 1.7 -nowarn -g -classpath lib/log4j-1.2.17.jar;lib/ls-adapter-interface.jar;lib/jbox2d-library-2.2.1.1.jar;lib/ua-parser-1.2.2.jar;lib/snakeyaml-1.11.jar -sourcepath src/ -d tmp_classes src/com/lightstreamer/adapters/RoomBall/RoomBallAdapter.java
+ > jar cvf LS_RoomBall_Demo_Adapters.jar -C tmp_classes com
 ```
 
 ## See Also
