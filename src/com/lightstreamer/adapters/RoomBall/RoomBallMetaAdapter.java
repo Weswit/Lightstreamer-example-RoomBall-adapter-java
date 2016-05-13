@@ -110,23 +110,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
     // Inner Classes -----------------------------------------------------------
 
-    class NotifyNickNameTask implements Runnable {
-
-        private final String sessionID;
-        private final String name;
-
-        public NotifyNickNameTask(String sessionID, String name) {
-            super();
-            this.sessionID = sessionID;
-            this.name = name;
-        }
-
-        @Override
-        public void run() {
-            notifyNickName(sessionID, name);
-        }
-    }
-
     class NotifyChatMessageTask implements Runnable {
 
         private final String sessionID;
@@ -184,7 +167,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             } else {
                 DOMConfigurator.configure(logConfigFile.getAbsolutePath());
             }
-        }        
+        }
         logger = Logger.getLogger(ROOM_DEMO_LOGGER_NAME);
 
         try{
@@ -240,6 +223,8 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             } catch (Exception e) {
                 logger.warn(e);
             }
+        } else {
+        	logger.warn("Not exists " + sessionID + " in nicksns -> room.removePlayer not called!");
         }
     }
 
@@ -314,10 +299,30 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                     }
                 }
 
-                String recommendedName = getRecommendedName(proposedName, nicksns.values());
-
-                messageDeliveryExecutor.execute(new NotifyNickNameTask(sessionID, recommendedName));
-
+                // synchronized login
+                String recommendedName;
+                
+                synchronized(nicksns) {
+                	recommendedName = getRecommendedName(proposedName, nicksns.values());
+                	
+	                try {
+	                    String ip = getIp(sessionID, sessions);
+	                    if (ip.isEmpty()) {
+	                        logger.warn("New player '" + recommendedName + "' message received from non-existent session '" + sessionID + "'.");
+	                    } else {
+	                        tracer.info("New player '" + recommendedName + "' from ip " + ip );
+	                    }
+	                	
+	                	String userAgent = ( usrAgnts.get(sessionID) != null ? usrAgnts.get(sessionID) : "undetected");
+	                    room.addPlayer(recommendedName, userAgent);
+	                    nicksns.put(sessionID, recommendedName);
+	                } catch (RoomException e) {
+	                    logger.warn("Unable to add player: " + e.getMessage());
+	                } catch (Exception e) {
+	                    logger.warn("Message not well formatted, skipped.", e);
+	                }
+                }
+                
                 if (!recommendedName.equalsIgnoreCase(proposedName)) {
                     throw new CreditsException(-2720, recommendedName);
                     // brings back to the case where the name has been
@@ -339,32 +344,6 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     // Private Methods ---------------------------------------------------------
-
-    /**
-     *
-     * @param sessionID
-     * @param message
-     * @return An empty string if the nickmame has been accepted, or the
-     * actual name if it has been changed.
-     */
-    synchronized private void notifyNickName(String sessionID, String nickname) {
-        try {
-            String ip = getIp(sessionID, sessions);
-            if (ip.isEmpty()) {
-                logger.warn("New player '" + nickname + "' message received from non-existent session '" + sessionID + "'.");
-            } else {
-                tracer.info("New player '" + nickname + "' from ip " + ip );
-            }
-
-            String userAgent = ( usrAgnts.get(sessionID) != null ? usrAgnts.get(sessionID) : "undetected");
-            room.addPlayer(nickname, userAgent);
-            nicksns.put(sessionID, nickname);
-        } catch (RoomException e) {
-            logger.warn("Unable to add player: " + e.getMessage());
-        } catch (Exception e) {
-            logger.warn("Message not well formatted, skipped.", e);
-        }
-    }
 
     synchronized private void notifyChatMessage(String sessionID, String message) {
         String playerName = nicksns.get(sessionID);
