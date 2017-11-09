@@ -65,7 +65,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
         <param name="jmxPort">9999</param>
         
         <messages_pool>
-            <max_size>10</max_size>
+            <max_size>1000</max_size>
             <max_free>10</max_free>
         </messages_pool>
         
