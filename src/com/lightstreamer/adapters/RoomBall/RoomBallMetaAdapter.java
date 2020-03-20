@@ -70,7 +70,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     public static Logger tracer = null;
 
     /**
-     * Keeps the client context informations supplied by Lightstreamer on the
+     * Keeps the client context information supplied by Lightstreamer on the
      * new session notifications.
      * Session information is needed to pass the IP to logging purpose.
      * Map of sessionInfo indexed by sessionID.
