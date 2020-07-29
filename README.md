@@ -21,7 +21,7 @@ The project is comprised of source code and a deployment example.
 
 #### Java Data Adapter and MetaData Adapter
 
-A Java Adapter implementing both the [SmartDataProvider](http://www.lightstreamer.com/docs/adapter_java_inprocess_api/com/lightstreamer/interfaces/data/SmartDataProvider.html) interface and the [MetadataProviderAdapter](http://www.lightstreamer.com/docs/adapter_java_inprocess_api/com/lightstreamer/interfaces/metadata/MetadataProviderAdapter.html) interface, to inject data into Lightstreamer server with real-time information about the movement of every player in the room. The adapter accepts also message submission for the chat room.<br>
+A Java Adapter implementing both the [SmartDataProvider](https://lightstreamer.com/api/ls-adapter-inprocess/latest/com/lightstreamer/interfaces/data/SmartDataProvider.html) interface and the [MetadataProviderAdapter](https://lightstreamer.com/api/ls-adapter-inprocess/latest/com/lightstreamer/interfaces/metadata/MetadataProviderAdapter.html) interface, to inject data into Lightstreamer server with real-time information about the movement of every player in the room. The adapter accepts also message submission for the chat room.<br>
 The adapter receives input commands from Lightstreamer server, which forwards messages arrived from clients to the adapter in relation to:
 * Movement commands;
 * Changing last message for the player.
