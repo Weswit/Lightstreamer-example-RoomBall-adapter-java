@@ -100,7 +100,7 @@ Note that the parameter `<metadata_adapter_initialised_first>` is mandatory to b
 <i>NOTE: not all configuration options of an Adapter Set are exposed by the file suggested above. 
 You can easily expand your configurations using the generic template, `DOCS-SDKs/sdk_adapter_java_inprocess/doc/adapter_conf_template/adapters.xml`, as a reference.</i><br>
 <br>
-Please refer [here](http://www.lightstreamer.com/docs/base/General%20Concepts.pdf) for more details about Lightstreamer Adapters.
+Please refer [here](https://lightstreamer.com/docs/ls-server/latest/General%20Concepts.pdf) for more details about Lightstreamer Adapters.
 
 ## Install
 
