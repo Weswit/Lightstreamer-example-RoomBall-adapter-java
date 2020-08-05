@@ -18,7 +18,9 @@
 
 package com.lightstreamer.adapters.RoomBall;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -41,7 +43,7 @@ class WorldFactory {
     private int  bSizeX = bRangeX + 2 * bThick;
     private int  bSizeY = bRangeY + 2 * bThick;
 
-    private final Logger logger = Logger.getLogger(RoomBallAdapter.ROOM_DEMO_LOGGER_NAME);
+    private final Logger logger = LogManager.getLogger(RoomBallAdapter.ROOM_DEMO_LOGGER_NAME);
 
     public World createWorld(int world_size_x, int world_size_y) {
         if ( world_size_x != 0 ) {
