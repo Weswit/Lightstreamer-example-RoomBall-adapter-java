@@ -282,7 +282,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                     String actualNickName = nicksns.get(sessionID);
 
                     if (!actualNickName.equalsIgnoreCase(proposedName)) {
-                        throw new CreditsException(-2720, actualNickName);
+                        throw new CreditsException(-2720, "Notifying nickname " + actualNickName + " to the client", actualNickName);
                         // brings back to the case where the name has been
                         // changed, causing the client to receive a non
                         // blocking error.
@@ -314,7 +314,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
                 }
                 
                 if (!recommendedName.equalsIgnoreCase(proposedName)) {
-                    throw new CreditsException(-2720, recommendedName);
+                    throw new CreditsException(-2720, "Notifying nickname " + recommendedName + " to the client", recommendedName);
                     // brings back to the case where the name has been
                     // changed, causing the client to receive a non
                     // blocking error.
