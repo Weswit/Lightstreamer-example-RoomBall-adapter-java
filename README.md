@@ -26,7 +26,7 @@ The adapter receives input commands from Lightstreamer server, which forwards me
 * Movement commands;
 * Changing last message for the player.
 
-The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Lightstreamer/Lightstreamer-example-ReusableMetadata-adapter-java) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
+The Metadata Adapter inherits from the reusable [LiteralBasedProvider](https://github.com/Lightstreamer/Lightstreamer-lib-adapter-java-inprocess#literalbasedprovider-metadata-adapter) and just adds a simple support for message submission. It should not be used as a reference, as no guaranteed delivery and no clustering support is shown.
 
 <!-- END DESCRIPTION lightstreamer-example-roomball-adapter-java -->
 
@@ -125,7 +125,7 @@ Assuming Maven is installed and available in your path you can build the demo by
 
 ### Related Projects
 
-* [Lightstreamer - Reusable Metadata Adapters - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-ReusableMetadata-adapter-java)
+* [LiteralBasedProvider Metadata Adapter](https://github.com/Lightstreamer/Lightstreamer-lib-adapter-java-inprocess#literalbasedprovider-metadata-adapter)
 * [Lightstreamer - 3D World Demo - Java Adapter](https://github.com/Lightstreamer/Lightstreamer-example-3DWorld-adapter-java)
 * [Lightstreamer - 3D World Demo - Three.js Client](https://github.com/Lightstreamer/Lightstreamer-example-3DWorld-client-javascript)
 
