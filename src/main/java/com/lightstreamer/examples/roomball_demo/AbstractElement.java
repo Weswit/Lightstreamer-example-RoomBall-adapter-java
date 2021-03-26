@@ -16,7 +16,7 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;

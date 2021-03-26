@@ -43,7 +43,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
     <metadata_adapter_initialised_first>Y</metadata_adapter_initialised_first>
 
     <metadata_provider>
-        <adapter_class>com.lightstreamer.adapters.RoomBall.RoomBallMetaAdapter</adapter_class>
+        <adapter_class>com.lightstreamer.examples.roomball_demo.RoomBallMetaAdapter</adapter_class>
   
         <!--
           TCP port on which Sun/Oracle's JMXMP connector will be
@@ -67,7 +67,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
     </metadata_provider>
     
     <data_provider>
-        <adapter_class>com.lightstreamer.adapters.RoomBall.RoomBallAdapter</adapter_class>
+        <adapter_class>com.lightstreamer.examples.roomball_demo.RoomBallAdapter</adapter_class>
         
         <!--
           Frame rate for physics calculations. In milliseconds.
@@ -102,7 +102,7 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 
 ## Build
 
-To build your own version of `example-RoomBall-adapter-java-0.0.1-SNAPSHOT.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#install) section above, you have two options:
+To build your own version of `roomball-adapter-java-x.y.z.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#install) section above, you have two options:
 either use [Maven](https://maven.apache.org/) (or other build tools) to take care of dependencies and building (recommended) or gather the necessary jars yourself and build it manually.
 For the sake of simplicity only the Maven case is detailed here.
 

@@ -16,7 +16,7 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

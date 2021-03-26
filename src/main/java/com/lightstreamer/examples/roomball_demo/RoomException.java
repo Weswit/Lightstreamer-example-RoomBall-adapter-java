@@ -16,17 +16,13 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
-import java.util.Map;
+public class RoomException extends Exception {
+    private static final long serialVersionUID = -5230818185562941692L;
 
-
-public interface Publisher {
-
-    public void publish(Event event);
-
-    public void publishEOS();
-
-    public void postBandwith(String userName, Map<String, String> itemEvent);
+    public RoomException(String message) {
+        super(message);
+    }
 
 }

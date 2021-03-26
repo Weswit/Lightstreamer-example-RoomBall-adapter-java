@@ -16,28 +16,26 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
-import org.jbox2d.dynamics.World;
+public interface Room {
 
-public interface  Element {
+    public void start();
 
-    public double  getX ( );
+    public void stop();
 
-    public double  getY ( );
+    public void addPlayer(String proposedName, String userAgent) throws RoomException;
 
-    public String getName();
+    public void removePlayer(String name);
 
-    public void close(World world);
+    public void updatePlayerMsg(String name, String message);
 
-    public boolean isChanged();
+    public void dispatchCommand(String name, String command);
 
-    public void setAsChanged();
+    public void touchAllElements();
 
-    public void setAsNotChanged();
+    public void addPollsBandwidth(String sessionID, String itemName, String usr, int jmxPort);
 
-    public void synchWithWorld();
-
-    public void accept(ElementVisitor visitor);
+    public void killBandChecker(String itemName);
 
 }

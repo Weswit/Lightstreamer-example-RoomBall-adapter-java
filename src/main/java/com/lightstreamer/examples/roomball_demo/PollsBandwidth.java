@@ -16,7 +16,7 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

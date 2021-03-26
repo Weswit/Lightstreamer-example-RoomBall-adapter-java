@@ -2,13 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.lightstreamer</groupId>
-  <artifactId>example-RoomBall-adapter-java</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.lightstreamer.examples</groupId>
+  <artifactId>roomball-adapter-java</artifactId>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>example-RoomBall-adapter-java</name>
-  <url>http://maven.apache.org</url>
+  <name>roomball-adapter-java</name>
+  <!-- <url>http://maven.apache.org</url> -->
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -36,7 +36,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>adapters.RoomBall.RoomBallMetaAdapter</mainClass>
+          <mainClass>com.lightstreamer.examples.roomball_demo.RoomBallMetaAdapter</mainClass>
         </configuration>
       </plugin>
          
@@ -50,6 +50,14 @@
       <url>https://maven.twttr.com/</url>
     </repository>
   </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Lightstreamer Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java</url>
+    </repository>
+  </distributionManagement>
 
   <dependencies>
     <dependency>

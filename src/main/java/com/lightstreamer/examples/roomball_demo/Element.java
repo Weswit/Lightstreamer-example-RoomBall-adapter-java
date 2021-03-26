@@ -16,12 +16,28 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
-public interface ElementVisitor {
+import org.jbox2d.dynamics.World;
 
-    public void visit(Player player);
+public interface  Element {
 
-    public void visit(Ball ball);
+    public double  getX ( );
+
+    public double  getY ( );
+
+    public String getName();
+
+    public void close(World world);
+
+    public boolean isChanged();
+
+    public void setAsChanged();
+
+    public void setAsNotChanged();
+
+    public void synchWithWorld();
+
+    public void accept(ElementVisitor visitor);
 
 }

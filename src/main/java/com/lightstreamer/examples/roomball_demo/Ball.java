@@ -16,13 +16,23 @@
  *
  */
 
-package com.lightstreamer.adapters.RoomBall;
+package com.lightstreamer.examples.roomball_demo;
 
-public class RoomException extends Exception {
-    private static final long serialVersionUID = -5230818185562941692L;
+import org.jbox2d.dynamics.Body;
 
-    public RoomException(String message) {
-        super(message);
+public class Ball extends AbstractElement {
+
+    public static final String NAME_BALL = "Ball-1";
+
+    public static final String USERDATA_BALL = "BALL";
+
+    public Ball(Body body) {
+        super(NAME_BALL, body);
+    }
+
+    @Override
+    public void accept(ElementVisitor visitor) {
+        visitor.visit(this);
     }
 
 }
