@@ -16,12 +16,13 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
-public interface ElementVisitor {
+public class RoomException extends Exception {
+    private static final long serialVersionUID = -5230818185562941692L;
 
-    public void visit(Player player);
-
-    public void visit(Ball ball);
+    public RoomException(String message) {
+        super(message);
+    }
 
 }

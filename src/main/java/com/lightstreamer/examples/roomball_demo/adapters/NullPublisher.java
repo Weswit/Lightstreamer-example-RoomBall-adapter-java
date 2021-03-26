@@ -16,23 +16,22 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
-import org.jbox2d.dynamics.Body;
+import java.util.Map;
 
-public class Ball extends AbstractElement {
+public class NullPublisher implements Publisher {
 
-    public static final String NAME_BALL = "Ball-1";
-
-    public static final String USERDATA_BALL = "BALL";
-
-    public Ball(Body body) {
-        super(NAME_BALL, body);
+    @Override
+    public void publish(Event itemEvent) {
     }
 
     @Override
-    public void accept(ElementVisitor visitor) {
-        visitor.visit(this);
+    public void publishEOS() {
+    }
+
+    @Override
+    public void postBandwith(String userName, Map<String, String> itemEvent) {
     }
 
 }

@@ -16,22 +16,26 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
-import java.util.Map;
+public interface Room {
 
-public class NullPublisher implements Publisher {
+    public void start();
 
-    @Override
-    public void publish(Event itemEvent) {
-    }
+    public void stop();
 
-    @Override
-    public void publishEOS() {
-    }
+    public void addPlayer(String proposedName, String userAgent) throws RoomException;
 
-    @Override
-    public void postBandwith(String userName, Map<String, String> itemEvent) {
-    }
+    public void removePlayer(String name);
+
+    public void updatePlayerMsg(String name, String message);
+
+    public void dispatchCommand(String name, String command);
+
+    public void touchAllElements();
+
+    public void addPollsBandwidth(String sessionID, String itemName, String usr, int jmxPort);
+
+    public void killBandChecker(String itemName);
 
 }

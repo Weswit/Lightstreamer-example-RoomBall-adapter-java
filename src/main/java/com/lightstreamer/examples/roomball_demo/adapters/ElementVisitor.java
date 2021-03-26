@@ -16,26 +16,12 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
-public interface Room {
+public interface ElementVisitor {
 
-    public void start();
+    public void visit(Player player);
 
-    public void stop();
-
-    public void addPlayer(String proposedName, String userAgent) throws RoomException;
-
-    public void removePlayer(String name);
-
-    public void updatePlayerMsg(String name, String message);
-
-    public void dispatchCommand(String name, String command);
-
-    public void touchAllElements();
-
-    public void addPollsBandwidth(String sessionID, String itemName, String usr, int jmxPort);
-
-    public void killBandChecker(String itemName);
+    public void visit(Ball ball);
 
 }

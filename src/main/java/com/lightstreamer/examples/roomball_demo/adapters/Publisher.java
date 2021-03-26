@@ -16,28 +16,17 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
-import org.jbox2d.dynamics.World;
+import java.util.Map;
 
-public interface  Element {
 
-    public double  getX ( );
+public interface Publisher {
 
-    public double  getY ( );
+    public void publish(Event event);
 
-    public String getName();
+    public void publishEOS();
 
-    public void close(World world);
-
-    public boolean isChanged();
-
-    public void setAsChanged();
-
-    public void setAsNotChanged();
-
-    public void synchWithWorld();
-
-    public void accept(ElementVisitor visitor);
+    public void postBandwith(String userName, Map<String, String> itemEvent);
 
 }

@@ -16,7 +16,7 @@
  * 
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
 public class WorldsStatistics {
     

@@ -16,7 +16,7 @@
  *
  */
 
-package com.lightstreamer.examples.roomball_demo;
+package com.lightstreamer.examples.roomball_demo.adapters;
 
 import java.io.File;
 import java.io.IOException;
