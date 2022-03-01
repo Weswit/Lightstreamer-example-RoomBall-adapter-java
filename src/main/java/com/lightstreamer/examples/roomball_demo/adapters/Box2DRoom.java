@@ -262,7 +262,7 @@ public class Box2DRoom implements Room {
     }
 
     @Override
-    synchronized public void addPlayer(String name, String usrAgent)
+    synchronized public int addPlayer(String name, String usrAgent)
             throws RoomException {
 
         if (players.containsKey(name)) {
@@ -274,15 +274,17 @@ public class Box2DRoom implements Room {
 
         publishAdd(player);
         logger.debug("Added player '" + name + "'");
+
+        return players.size();
     }
 
     @Override
-    synchronized public void removePlayer(String name) {
+    synchronized public int removePlayer(String name) {
 
         Player player = players.remove(name);
         if (player == null) {
             logger.warn("Unable to remove '" + name + "': not present.");
-            return;
+            return players.size();
         }
 
         player.close(m_world);
@@ -290,6 +292,8 @@ public class Box2DRoom implements Room {
 
         publishDelete(player);
         logger.debug("Removed player '"+ name +"'");
+
+        return players.size();
     }
 
     @Override
