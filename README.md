@@ -132,6 +132,7 @@ Assuming Maven is installed and available in your path you can build the demo by
 <!-- END RELATED_ENTRIES -->
 ## Lightstreamer Compatibility Notes
 
-- Compatible with Lightstreamer SDK for Java In-Process Adapters versions 7.3.x.
+- Compatible with Lightstreamer SDK for Java In-Process Adapters since version 7.4.0.
+- For a version of this example compatible with Lightstreamer SDK for Java Adapters versions 7.0 to 7.3, please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/tree/last_for_interface_7.3.x).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 6.0, please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/tree/pre_mvn).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 5.1, please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/tree/for_Lightstreamer_5.1).

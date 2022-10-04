@@ -196,7 +196,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     @Override
-    public int getDistinctSnapshotLength(String item) {
+    public int getDistinctSnapshotLength(String item, String dataAdapter) {
         return 0;
     }
     
