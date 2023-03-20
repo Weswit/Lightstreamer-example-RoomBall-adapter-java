@@ -43,7 +43,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
     <metadata_adapter_initialised_first>Y</metadata_adapter_initialised_first>
 
     <metadata_provider>
-        <adapter_class>com.lightstreamer.examples.roomball_demo.RoomBallMetaAdapter</adapter_class>
+        <adapter_class>com.lightstreamer.examples.roomball_demo.adapters.RoomBallMetaAdapter</adapter_class>
   
         <!--
           TCP port on which Sun/Oracle's JMXMP connector will be
@@ -67,7 +67,7 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
     </metadata_provider>
     
     <data_provider>
-        <adapter_class>com.lightstreamer.examples.roomball_demo.RoomBallAdapter</adapter_class>
+        <adapter_class>com.lightstreamer.examples.roomball_demo.adapters.RoomBallAdapter</adapter_class>
         
         <!--
           Frame rate for physics calculations. In milliseconds.
