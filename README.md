@@ -98,11 +98,11 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 * Get the `deploy.zip` file of the [proper release](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java/releases), unzip it, and copy the `RoomBall` folder into the `adapters` folder of your Lightstreamer Server installation.
 * [Optional]  Customize the logging settings in log4j configuration file `RoomBall/classes/log4j2.xml`.
 * Launch Lightstreamer Server.
-* Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#clients-using-this-adapter).
+* Test the Adapter, launching the [Lightstreamer - Room-Ball Demo - HTML Client](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-client-javascript) listed in [Clients Using This Adapter](#clients-using-this-adapter).
 
 ## Build
 
-To build your own version of `roomball-adapter-java-x.y.z.jar` instead of using the one provided in the `deploy.zip` file from the [Install](https://github.com/Lightstreamer/Lightstreamer-example-RoomBall-adapter-java#install) section above, you have two options:
+To build your own version of `roomball-adapter-java-x.y.z.jar` instead of using the one provided in the `deploy.zip` file from the [Install](#install) section above, you have two options:
 either use [Maven](https://maven.apache.org/) (or other build tools) to take care of dependencies and building (recommended) or gather the necessary jars yourself and build it manually.
 For the sake of simplicity only the Maven case is detailed here.
 
