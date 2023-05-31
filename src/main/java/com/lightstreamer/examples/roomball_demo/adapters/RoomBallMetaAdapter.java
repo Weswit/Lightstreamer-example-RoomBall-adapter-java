@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -239,20 +241,22 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
         }
     }
 
-    /**
-     * The method should perform fast and the message processing is done asynchronously.
-     */
     @Override
-    public void notifyUserMessage(String user, String sessionID, String message)
+    public CompletionStage<String> notifyUserMessage(String user, String sessionID, String message)
             throws CreditsException {
+
+        // The message processing is done asynchronously in a fire-and-forget fashion.
+        // As a consequence, we won't introduce blocking operations here,
+        // hence we can proceed inline
+
         try {
             if (message == null) {
-                return ;
+                return null;
             }
 
             if (sessions.get(sessionID) == null) {
                 logger.warn("Message received from not-existent session '" + sessionID + "'.");
-                return;
+                return null;
             }
 
             if (message.startsWith("n|") ) {
@@ -331,6 +335,8 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             // Skip, message not well formatted
             logger.warn("Unexpected error handling message from user '"+user+"', session '"+sessionID+"'.", e);
         }
+
+        return CompletableFuture.completedStage(null);
     }
 
     // Private Methods ---------------------------------------------------------

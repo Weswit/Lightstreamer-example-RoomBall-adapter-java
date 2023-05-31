@@ -51,11 +51,6 @@ The `adapters.xml` file for the *Room-Ball Demo*, should look like:
         -->
         <param name="jmxPort">9999</param>
         
-        <messages_pool>
-            <max_size>1000</max_size>
-            <max_free>10</max_free>
-        </messages_pool>
-        
         <!--
           Dimensions of the world. 
           Any changes to these parameters involves actions on the client
