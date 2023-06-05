@@ -336,7 +336,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
             logger.warn("Unexpected error handling message from user '"+user+"', session '"+sessionID+"'.", e);
         }
 
-        return CompletableFuture.completedStage(null);
+        return CompletableFuture.completedFuture(null);
     }
 
     // Private Methods ---------------------------------------------------------
