@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -242,7 +241,7 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
     }
 
     @Override
-    public CompletionStage<String> notifyUserMessage(String user, String sessionID, String message)
+    public CompletableFuture<String> notifyUserMessage(String user, String sessionID, String message)
             throws CreditsException {
 
         // The message processing is done asynchronously in a fire-and-forget fashion.
