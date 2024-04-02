@@ -8,7 +8,7 @@ The *Room-Ball Demo* implements a simple pure Server-side Mode multiplayer socce
 * Physics runs on server side only
 * User commands are streamed from clients to server
 * Position updates are streamed from server to clients
-* Clients are pure renderer (no feedback, no prediction, no interpolation)
+* Clients are pure renderers (no feedback, no prediction, no interpolation)
  
 For more information, see this slide deck from the HTML5 Developer Conference:<br>
 http://www.slideshare.net/alinone/slides-html5-devconf-20131022
@@ -99,7 +99,7 @@ If you want to install a version of the *Room-Ball Demo* in your local Lightstre
 
 To build your own version of `roomball-adapter-java-x.y.z.jar` instead of using the one provided in the `deploy.zip` file from the [Install](#install) section above, you have two options:
 either use [Maven](https://maven.apache.org/) (or other build tools) to take care of dependencies and building (recommended) or gather the necessary jars yourself and build it manually.
-For the sake of simplicity only the Maven case is detailed here.
+For the sake of simplicity, only the Maven case is detailed here.
 
 ### Maven
 
