@@ -367,26 +367,21 @@ public class RoomBallMetaAdapter extends LiteralBasedProvider {
 
     @SuppressWarnings("rawtypes")
     private void addUserAgent(String sessionID, Map sessionInfo, Map<String, String> usrAgnts) {
-        try {
-            String ua = (String) sessionInfo.get(FIELD_USER_AGENT);
-            if (ua == null) {
-                logger.info("User Agent not present for session " + sessionID);
-                return;
-            }
-
-            logger.info("User Agent: " + ua);
-            Parser uaParser = new Parser();
-            Client c = uaParser.parse(ua);
-            String userAgent = ( c.userAgent.family.equals("Android") ?
-                c.userAgent.family + " Browser on " + c.os.family :
-                c.userAgent.family + " on " + c.os.family);
-
-            usrAgnts.put(sessionID, userAgent);
-            logger.info("Saved: " + userAgent + ", for " + sessionID);
-
-        } catch (IOException ioe) {
-            logger.warn("Unable to retrieve user agent for sesion '" + sessionID + "'");
+        String ua = (String) sessionInfo.get(FIELD_USER_AGENT);
+        if (ua == null) {
+            logger.info("User Agent not present for session " + sessionID);
+            return;
         }
+
+        logger.info("User Agent: " + ua);
+        Parser uaParser = new Parser();
+        Client c = uaParser.parse(ua);
+        String userAgent = ( c.userAgent.family.equals("Android") ?
+            c.userAgent.family + " Browser on " + c.os.family :
+            c.userAgent.family + " on " + c.os.family);
+
+        usrAgnts.put(sessionID, userAgent);
+        logger.info("Saved: " + userAgent + ", for " + sessionID);
     }
 
     private String removeTypeFrom(String message) {
